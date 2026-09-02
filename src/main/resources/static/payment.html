@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgriQ | Payment Status</title>
+  <link rel="stylesheet" href="css/payment.css">
+  <link rel="stylesheet" href="css/navigation.css">
+  <script src="js/theme.js"></script>
+</head>
+<body>
+  <header class="site-header"><a class="brand" href="dashboard.html"><span class="brand-mark">A</span><span>AgriQ</span></a><button class="nav-toggle" aria-expanded="false">Menu</button><nav class="primary-nav"><a href="dashboard.html">Dashboard</a><a href="booking.html">Book Slot</a><a href="booking.html#my-bookings">My Bookings</a><a href="procurement.html">Procurement</a><a href="payment.html" aria-current="page">Payment Status</a><a href="dashboard.html#profile">My Profile</a><button id="logout" class="nav-logout">Logout</button></nav></header>
+  <main class="payment-page">
+    <section class="page-heading">
+      <p class="eyebrow">Farmer services portal</p>
+      <h1>Payment status</h1>
+      <p>Track your procurement payment records and their current status.</p>
+    </section>
+    <section class="payment-layout">
+      <section class="card form-card" aria-labelledby="form-heading">
+        <h2 id="form-heading">Create payment record</h2>
+        <form id="paymentForm">
+          <label for="farmerId">Farmer ID</label><input id="farmerId" type="number" readonly required>
+          <label for="procurementId">Procurement ID</label><input id="procurementId" type="number" min="1" required>
+          <div class="form-row">
+            <div><label for="amount">Amount (₹)</label><input id="amount" type="number" min="0" step="0.01" required></div>
+            <div><label for="paymentDate">Payment Date</label><input id="paymentDate" type="date" required></div>
+          </div>
+          <label for="transactionReference">Transaction Reference</label><input id="transactionReference" type="text" placeholder="e.g. AGRIQ-2026-001" required>
+          <label for="status">Payment Status</label>
+          <select id="status" required><option value="PENDING">Pending</option><option value="PROCESSING">Processing</option><option value="PAID">Paid</option></select>
+          <button class="primary-button" type="submit">Create Payment Record</button>
+        </form>
+        <p id="formMessage" class="form-message" role="alert" aria-live="polite"></p>
+      </section>
+      <section class="card records-card" aria-labelledby="records-heading">
+        <div class="section-title"><div><p class="eyebrow">Your payments</p><h2 id="records-heading">Payment Records</h2></div><button id="refreshRecords" class="text-button" type="button">Refresh</button></div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Procurement ID</th><th>Amount</th><th>Status</th><th>Payment Date</th><th>Transaction Reference</th><th>Update</th></tr></thead>
+            <tbody id="paymentRows"><tr><td colspan="6" class="empty-state">Loading payment records...</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+  </main>
+  <script>
+    let farmer;
+    try { farmer = JSON.parse(sessionStorage.getItem('farmer')); } catch (error) { farmer = null; }
+    const farmerId = farmer && farmer.id;
+    if (!farmerId) window.location.replace(sessionStorage.getItem('admin') === 'true' ? 'admin-dashboard.html' : 'index.html');
+    document.querySelector('.nav-toggle').addEventListener('click', e => { const nav = document.querySelector('.primary-nav'); nav.classList.toggle('is-open'); e.currentTarget.setAttribute('aria-expanded', nav.classList.contains('is-open')); });
+    document.getElementById('logout').addEventListener('click', () => { sessionStorage.removeItem('farmer'); window.location.href = 'index.html'; });
+
+    const form = document.getElementById('paymentForm');
+    const formMessage = document.getElementById('formMessage');
+    const rows = document.getElementById('paymentRows');
+    document.getElementById('farmerId').value = farmerId || '';
+    document.getElementById('paymentDate').value = new Date().toISOString().split('T')[0];
+
+    function formatDate(date) {
+      return date ? new Date(`${date}T00:00:00`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '-';
+    }
+    function statusClass(status) { return `status status-${String(status).toLowerCase()}`; }
+
+    async function updateStatus(paymentId, status) {
+      try {
+        const response = await fetch(`/api/payments/${paymentId}/status`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) });
+        if (!response.ok) throw new Error();
+        formMessage.textContent = 'Payment status updated successfully.';
+        await loadPayments();
+      } catch (error) {
+        formMessage.textContent = 'Unable to update payment status. Please try again.';
+      }
+    }
+
+    function paymentRow(payment) {
+      const row = document.createElement('tr');
+      [`#${payment.procurementId}`, `₹${Number(payment.amount).toFixed(2)}`].forEach((value) => {
+        const cell = document.createElement('td'); cell.textContent = value; row.appendChild(cell);
+      });
+      const statusCell = document.createElement('td');
+      const badge = document.createElement('span'); badge.className = statusClass(payment.status); badge.textContent = payment.status;
+      statusCell.appendChild(badge); row.appendChild(statusCell);
+      const dateCell = document.createElement('td'); dateCell.textContent = formatDate(payment.paymentDate); row.appendChild(dateCell);
+      const referenceCell = document.createElement('td'); referenceCell.textContent = payment.transactionReference; row.appendChild(referenceCell);
+      const updateCell = document.createElement('td');
+      const statusSelect = document.createElement('select');
+      ['PENDING', 'PROCESSING', 'PAID'].forEach((status) => {
+        const option = document.createElement('option'); option.value = status; option.textContent = status; option.selected = status === payment.status; statusSelect.appendChild(option);
+      });
+      const updateButton = document.createElement('button'); updateButton.className = 'edit-button'; updateButton.type = 'button'; updateButton.textContent = 'Save';
+      updateButton.addEventListener('click', () => updateStatus(payment.id, statusSelect.value));
+      updateCell.append(statusSelect, updateButton); row.appendChild(updateCell);
+      return row;
+    }
+
+    async function loadPayments() {
+      if (!farmerId) return;
+      rows.innerHTML = '<tr><td colspan="6" class="empty-state">Loading payment records...</td></tr>';
+      try {
+        const response = await fetch(`/api/payments/farmer/${farmerId}`);
+        if (!response.ok) throw new Error();
+        const payments = await response.json();
+        rows.innerHTML = '';
+        if (!payments.length) {
+          rows.innerHTML = '<tr><td colspan="6" class="empty-state">No payment records have been added.</td></tr>';
+          return;
+        }
+        payments.forEach((payment) => rows.appendChild(paymentRow(payment)));
+      } catch (error) {
+        rows.innerHTML = '<tr><td colspan="6" class="empty-state error-state">Unable to load payment records.</td></tr>';
+      }
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const payment = {
+        farmerId,
+        procurementId: Number(document.getElementById('procurementId').value),
+        amount: Number(document.getElementById('amount').value),
+        status: document.getElementById('status').value,
+        paymentDate: document.getElementById('paymentDate').value,
+        transactionReference: document.getElementById('transactionReference').value.trim()
+      };
+      try {
+        const response = await fetch('/api/payments', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payment) });
+        if (!response.ok) throw new Error();
+        form.reset();
+        document.getElementById('farmerId').value = farmerId;
+        document.getElementById('paymentDate').value = new Date().toISOString().split('T')[0];
+        formMessage.textContent = 'Payment record created successfully.';
+        await loadPayments();
+      } catch (error) {
+        formMessage.textContent = 'Unable to create payment record. Please try again.';
+      }
+    });
+
+    document.getElementById('refreshRecords').addEventListener('click', loadPayments);
+    loadPayments();
+  </script>
+</body>
+</html>

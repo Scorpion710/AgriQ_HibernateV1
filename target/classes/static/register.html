@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgriQ | Farmer Registration</title>
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+  <header class="site-header"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">A</span><span>AgriQ</span></a></header>
+  <main class="auth-card">
+    <p class="eyebrow">Farmer services portal</p><h1>Farmer Registration</h1>
+    <form id="register-form">
+      <label for="name">Farmer Name</label><input id="name" required>
+      <label for="mobileNumber">Mobile Number</label><input id="mobileNumber" type="tel" inputmode="numeric" required>
+      <label for="pin">4-digit PIN</label><input id="pin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" required>
+      <button type="submit">Register</button>
+    </form>
+    <p id="message" class="message" role="alert"></p><p class="link"><a href="index.html">Back to Login</a></p>
+  </main>
+  <script>
+    const form = document.getElementById('register-form'); const message = document.getElementById('message');
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault(); message.textContent = ''; message.className = 'message';
+      try {
+        const response = await fetch('/api/farmers/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: form.name.value.trim(), mobileNumber: form.mobileNumber.value.trim(), pin: form.pin.value }) });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) { message.textContent = data.message || 'Registration failed. Please try again.'; return; }
+        message.textContent = 'Registration successful. Redirecting to login...'; message.classList.add('success');
+        setTimeout(() => { window.location.href = 'index.html'; }, 1200);
+      } catch (error) {
+        message.textContent = 'Unable to connect. Please try again.';
+      }
+    });
+  </script>
+</body>
+</html>

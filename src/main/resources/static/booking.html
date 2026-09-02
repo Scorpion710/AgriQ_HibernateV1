@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgriQ | Book Slot</title>
+  <link rel="stylesheet" href="css/booking.css">
+  <link rel="stylesheet" href="css/navigation.css">
+  <script src="js/theme.js"></script>
+</head>
+<body>
+  <header class="site-header"><a class="brand" href="dashboard.html"><span class="brand-mark">A</span><span>AgriQ</span></a><button class="nav-toggle" aria-expanded="false">Menu</button><nav class="primary-nav"><a href="dashboard.html">Dashboard</a><a href="booking.html" aria-current="page">Book Slot</a><a href="#my-bookings">My Bookings</a><a href="procurement.html">Procurement</a><a href="payment.html">Payment Status</a><a href="dashboard.html#profile">My Profile</a><button id="logout" class="nav-logout">Logout</button></nav></header>
+
+  <main class="booking-page">
+    <section class="page-heading">
+      <p class="eyebrow">Farmer services portal</p>
+      <h1>Book a procurement slot</h1>
+      <p>Select a centre, date, and convenient time for your visit.</p>
+    </section>
+
+    <div class="booking-grid">
+      <section class="card" aria-labelledby="form-heading">
+        <h2 id="form-heading">Slot details</h2>
+        <form id="bookingForm">
+          <label for="centreId">Procurement Centre</label>
+          <select id="centreId" required><option value="">Loading centres...</option></select>
+
+          <div id="locationCard" class="location-card" hidden>
+            <span class="location-label">Centre location</span>
+            <strong id="centreLocation"></strong>
+          </div>
+
+          <label for="bookingDate">Booking Date</label>
+          <input id="bookingDate" type="date" required>
+
+          <label for="timeSlot">Time Slot</label>
+          <select id="timeSlot" required>
+            <option value="">Select a time slot</option>
+            <option>09:00 AM - 10:00 AM</option>
+            <option>10:00 AM - 11:00 AM</option>
+            <option>11:00 AM - 12:00 PM</option>
+            <option>02:00 PM - 03:00 PM</option>
+            <option>03:00 PM - 04:00 PM</option>
+          </select>
+
+          <button class="primary-button" type="submit">Book Slot</button>
+        </form>
+        <p id="formMessage" class="form-message" role="alert" aria-live="polite"></p>
+        <div id="successMessage" class="success-message" hidden role="status">
+          <strong>Slot booked successfully</strong>
+          <span id="successDetails"></span>
+          <span id="successToken"></span>
+          <span id="successQueueStatus"></span>
+        </div>
+      </section>
+
+      <section id="my-bookings" class="card bookings-card" aria-labelledby="bookings-heading">
+        <div class="section-title"><div><p class="eyebrow">Your visits</p><h2 id="bookings-heading">My Bookings</h2></div><button id="refreshBookings" class="text-button" type="button">Refresh</button></div>
+        <div id="bookingsList" class="bookings-list" aria-live="polite"><p class="empty-state">Loading your bookings...</p></div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    let farmer;
+    try { farmer = JSON.parse(sessionStorage.getItem('farmer')); } catch (error) { farmer = null; }
+    const farmerId = farmer && farmer.id;
+    if (!farmerId) {
+      window.location.replace(sessionStorage.getItem('admin') === 'true' ? 'admin-dashboard.html' : 'index.html');
+    }
+    document.querySelector('.nav-toggle').addEventListener('click', e => { const nav = document.querySelector('.primary-nav'); nav.classList.toggle('is-open'); e.currentTarget.setAttribute('aria-expanded', nav.classList.contains('is-open')); });
+    document.getElementById('logout').addEventListener('click', () => { sessionStorage.removeItem('farmer'); window.location.href = 'index.html'; });
+
+    const centreSelect = document.getElementById('centreId');
+    const locationCard = document.getElementById('locationCard');
+    const centreLocation = document.getElementById('centreLocation');
+    const formMessage = document.getElementById('formMessage');
+    const bookingsList = document.getElementById('bookingsList');
+    let centres = [];
+
+    document.getElementById('bookingDate').min = new Date().toISOString().split('T')[0];
+
+    async function loadCentres() {
+      try {
+        const response = await fetch('/api/bookings/centres');
+        if (!response.ok) throw new Error();
+        centres = await response.json();
+        centreSelect.innerHTML = '<option value="">Select a procurement centre</option>';
+        centres.forEach((centre) => {
+          const option = document.createElement('option');
+          option.value = centre.id;
+          option.textContent = centre.name;
+          centreSelect.appendChild(option);
+        });
+      } catch (error) {
+        centreSelect.innerHTML = '<option value="">Unable to load centres</option>';
+        formMessage.textContent = 'Procurement centres could not be loaded. Please try again.';
+      }
+    }
+
+    centreSelect.addEventListener('change', () => {
+      const selectedCentre = centres.find((centre) => String(centre.id) === centreSelect.value);
+      locationCard.hidden = !selectedCentre;
+      centreLocation.textContent = selectedCentre ? selectedCentre.location : '';
+    });
+
+    function formatDate(date) {
+      return new Date(`${date}T00:00:00`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    function bookingItem(booking) {
+      const item = document.createElement('article');
+      item.className = 'booking-item';
+      const centre = centres.find((entry) => entry.id === booking.centreId);
+      const title = document.createElement('strong');
+      title.textContent = centre ? centre.name : `Centre #${booking.centreId}`;
+      const details = document.createElement('p');
+      const queueStatus = booking.queueStatus || 'WAITING';
+      const tokenNumber = booking.tokenNumber || '-';
+      details.textContent = `Token #${tokenNumber} · ${formatDate(booking.bookingDate)} · ${booking.timeSlot}`;
+      const status = document.createElement('span');
+      status.className = `status status-${queueStatus.toLowerCase()}`;
+      status.textContent = queueStatus;
+      item.append(title, details, status);
+      return item;
+    }
+
+    async function loadBookings() {
+      if (!farmerId) return;
+      bookingsList.innerHTML = '<p class="empty-state">Loading your bookings...</p>';
+      try {
+        const response = await fetch(`/api/bookings/farmer/${farmerId}`);
+        if (!response.ok) throw new Error();
+        const bookings = await response.json();
+        bookingsList.innerHTML = '';
+        if (!bookings.length) {
+          bookingsList.innerHTML = '<p class="empty-state">You have no slot bookings yet.</p>';
+          return;
+        }
+        bookings.forEach((booking) => bookingsList.appendChild(bookingItem(booking)));
+      } catch (error) {
+        bookingsList.innerHTML = '<p class="empty-state error-state">Unable to load bookings. Please try again.</p>';
+      }
+    }
+
+    document.getElementById('bookingForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      formMessage.textContent = '';
+      document.getElementById('successMessage').hidden = true;
+      const booking = {
+        farmerId,
+        centreId: Number(centreSelect.value),
+        bookingDate: document.getElementById('bookingDate').value,
+        timeSlot: document.getElementById('timeSlot').value
+      };
+      try {
+        const response = await fetch('/api/bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(booking)
+        });
+        if (!response.ok) throw new Error();
+        const savedBooking = await response.json();
+        document.getElementById('successDetails').textContent = `Booking date: ${formatDate(savedBooking.bookingDate)} · ${savedBooking.timeSlot}`;
+        document.getElementById('successToken').textContent = `Token Number: ${savedBooking.tokenNumber}`;
+        document.getElementById('successQueueStatus').textContent = `Queue Status: ${savedBooking.queueStatus}`;
+        document.getElementById('successMessage').hidden = false;
+        document.getElementById('bookingForm').reset();
+        locationCard.hidden = true;
+        await loadBookings();
+      } catch (error) {
+        formMessage.textContent = 'Unable to book the slot. Please try again.';
+      }
+    });
+
+    document.getElementById('refreshBookings').addEventListener('click', loadBookings);
+    loadCentres().then(loadBookings);
+  </script>
+</body>
+</html>

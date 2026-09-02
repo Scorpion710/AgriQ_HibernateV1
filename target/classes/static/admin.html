@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgriQ | Admin Dashboard</title>
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/payment.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="css/navigation.css">
+</head>
+<body>
+  <div class="admin-shell"><aside class="admin-sidebar"><a class="brand" href="admin-dashboard.html"><span class="brand-mark" aria-hidden="true">A</span><span>AgriQ</span></a><nav class="admin-nav" aria-label="Admin navigation"><a href="admin-dashboard.html">Dashboard</a><a href="#bookings">Bookings</a><a href="#farmers">Farmers</a><a href="#payments">Payments</a><a href="#procurement">Procurement</a><button id="adminLogout">Logout</button></nav></aside><div class="admin-content"><header class="admin-topbar">AgriQ administration</header><main class="admin-page">
+    <section class="page-heading">
+      <p class="eyebrow">Prototype administration</p>
+      <h1>Admin Dashboard</h1>
+      <p>View AgriQ farmer records and update simple queue and payment statuses.</p>
+    </section>
+    <section class="admin-grid" aria-label="Admin records">
+      <section id="farmers" class="card admin-card" aria-labelledby="farmers-heading">
+        <div class="section-title"><div><p class="eyebrow">Registered users</p><h2 id="farmers-heading">Farmers</h2></div><button id="refreshFarmers" class="text-button" type="button">Refresh</button></div>
+        <div class="table-scroll"><table><thead><tr><th>Name</th><th>Mobile Number</th></tr></thead><tbody id="farmerRows"><tr><td colspan="2" class="empty-state">Loading farmers...</td></tr></tbody></table></div>
+      </section>
+
+      <section id="bookings" class="card admin-card" aria-labelledby="bookings-heading">
+        <div class="section-title"><div><p class="eyebrow">Centre visits</p><h2 id="bookings-heading">Bookings / Queue</h2></div><button id="refreshBookings" class="text-button" type="button">Refresh</button></div>
+        <div class="table-scroll"><table><thead><tr><th>Farmer ID</th><th>Centre</th><th>Date</th><th>Time Slot</th><th>Token</th><th>Queue Status</th><th>Update</th></tr></thead><tbody id="bookingRows"><tr><td colspan="7" class="empty-state">Loading bookings...</td></tr></tbody></table></div>
+      </section>
+
+      <section id="procurement" class="card admin-card" aria-labelledby="procurements-heading">
+        <div class="section-title"><div><p class="eyebrow">Crop purchases</p><h2 id="procurements-heading">Procurement</h2></div><button id="refreshProcurements" class="text-button" type="button">Refresh</button></div>
+        <div class="table-scroll"><table><thead><tr><th>Farmer ID</th><th>Crop</th><th>Quantity</th><th>Grade</th><th>Total Amount</th></tr></thead><tbody id="procurementRows"><tr><td colspan="5" class="empty-state">Loading procurement records...</td></tr></tbody></table></div>
+      </section>
+
+      <section id="payments" class="card admin-card" aria-labelledby="payments-heading">
+        <div class="section-title"><div><p class="eyebrow">Farmer payments</p><h2 id="payments-heading">Payments</h2></div><button id="refreshPayments" class="text-button" type="button">Refresh</button></div>
+        <div class="table-scroll"><table><thead><tr><th>Farmer ID</th><th>Amount</th><th>Payment Status</th><th>Transaction Reference</th><th>Update</th></tr></thead><tbody id="paymentRows"><tr><td colspan="5" class="empty-state">Loading payments...</td></tr></tbody></table></div>
+      </section>
+    </section>
+  </main></div></div>
+  <script>
+    if (sessionStorage.getItem('admin') !== 'true') window.location.replace(sessionStorage.getItem('farmer') ? 'dashboard.html' : 'admin-login.html');
+    document.getElementById('adminLogout').addEventListener('click', () => { sessionStorage.removeItem('admin'); window.location.href = 'admin-login.html'; });
+    const centres = new Map();
+    const emptyRow = (columns, message) => `<tr><td colspan="${columns}" class="empty-state">${message}</td></tr>`;
+    const addCell = (row, value) => { const cell = document.createElement('td'); cell.textContent = value ?? '-'; row.appendChild(cell); };
+    const statusBadge = (status) => { const badge = document.createElement('span'); badge.className = `status status-${String(status).toLowerCase()}`; badge.textContent = status; return badge; };
+    const formatDate = (date) => date ? new Date(`${date}T00:00:00`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '-';
+
+    async function loadCentres() {
+      const response = await fetch('/api/bookings/centres');
+      if (!response.ok) throw new Error();
+      (await response.json()).forEach((centre) => centres.set(centre.id, centre.name));
+    }
+
+    async function loadFarmers() {
+      const target = document.getElementById('farmerRows');
+      try {
+        const response = await fetch('/api/farmers');
+        if (!response.ok) throw new Error();
+        const farmers = await response.json(); target.innerHTML = '';
+        if (!farmers.length) { target.innerHTML = emptyRow(2, 'No registered farmers yet.'); return; }
+        farmers.forEach((farmer) => { const row = document.createElement('tr'); addCell(row, farmer.name); addCell(row, farmer.mobileNumber); target.appendChild(row); });
+      } catch (error) { target.innerHTML = emptyRow(2, 'Unable to load farmers.'); }
+    }
+
+    function statusControls(statuses, currentStatus, onSave) {
+      const wrapper = document.createElement('div'); wrapper.className = 'status-controls';
+      const select = document.createElement('select');
+      statuses.forEach((status) => { const option = document.createElement('option'); option.value = status; option.textContent = status; option.selected = status === currentStatus; select.appendChild(option); });
+      const button = document.createElement('button'); button.className = 'edit-button'; button.type = 'button'; button.textContent = 'Save'; button.addEventListener('click', () => onSave(select.value));
+      wrapper.append(select, button); return wrapper;
+    }
+
+    async function updateQueueStatus(id, queueStatus) {
+      const response = await fetch(`/api/bookings/${id}/queue-status`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ queueStatus }) });
+      if (!response.ok) throw new Error();
+      await loadBookings();
+    }
+
+    async function loadBookings() {
+      const target = document.getElementById('bookingRows');
+      try {
+        const response = await fetch('/api/bookings');
+        if (!response.ok) throw new Error();
+        const bookings = await response.json(); target.innerHTML = '';
+        if (!bookings.length) { target.innerHTML = emptyRow(7, 'No bookings have been created.'); return; }
+        bookings.forEach((booking) => {
+          const row = document.createElement('tr');
+          addCell(row, `#${booking.farmerId}`); addCell(row, centres.get(booking.centreId) || `Centre #${booking.centreId}`); addCell(row, formatDate(booking.bookingDate)); addCell(row, booking.timeSlot); addCell(row, `#${booking.tokenNumber ?? '-'}`);
+          const statusCell = document.createElement('td'); statusCell.appendChild(statusBadge(booking.queueStatus || 'WAITING')); row.appendChild(statusCell);
+          const updateCell = document.createElement('td'); updateCell.appendChild(statusControls(['WAITING', 'SERVING', 'COMPLETED'], booking.queueStatus || 'WAITING', async (status) => { try { await updateQueueStatus(booking.id, status); } catch (error) { alert('Unable to update queue status.'); } })); row.appendChild(updateCell);
+          target.appendChild(row);
+        });
+      } catch (error) { target.innerHTML = emptyRow(7, 'Unable to load bookings.'); }
+    }
+
+    async function loadProcurements() {
+      const target = document.getElementById('procurementRows');
+      try {
+        const response = await fetch('/api/procurements');
+        if (!response.ok) throw new Error();
+        const records = await response.json(); target.innerHTML = '';
+        if (!records.length) { target.innerHTML = emptyRow(5, 'No procurement records have been added.'); return; }
+        records.forEach((record) => { const row = document.createElement('tr'); addCell(row, `#${record.farmerId}`); addCell(row, record.cropName); addCell(row, `${Number(record.quantityKg).toFixed(2)} kg`); addCell(row, record.grade); addCell(row, `₹${Number(record.totalAmount).toFixed(2)}`); target.appendChild(row); });
+      } catch (error) { target.innerHTML = emptyRow(5, 'Unable to load procurement records.'); }
+    }
+
+    async function updatePaymentStatus(id, status) {
+      const response = await fetch(`/api/payments/${id}/status`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) });
+      if (!response.ok) throw new Error();
+      await loadPayments();
+    }
+
+    async function loadPayments() {
+      const target = document.getElementById('paymentRows');
+      try {
+        const response = await fetch('/api/payments');
+        if (!response.ok) throw new Error();
+        const payments = await response.json(); target.innerHTML = '';
+        if (!payments.length) { target.innerHTML = emptyRow(5, 'No payment records have been added.'); return; }
+        payments.forEach((payment) => {
+          const row = document.createElement('tr');
+          addCell(row, `#${payment.farmerId}`); addCell(row, `₹${Number(payment.amount).toFixed(2)}`);
+          const statusCell = document.createElement('td'); statusCell.appendChild(statusBadge(payment.status)); row.appendChild(statusCell); addCell(row, payment.transactionReference);
+          const updateCell = document.createElement('td'); updateCell.appendChild(statusControls(['PENDING', 'PROCESSING', 'PAID'], payment.status, async (status) => { try { await updatePaymentStatus(payment.id, status); } catch (error) { alert('Unable to update payment status.'); } })); row.appendChild(updateCell);
+          target.appendChild(row);
+        });
+      } catch (error) { target.innerHTML = emptyRow(5, 'Unable to load payment records.'); }
+    }
+
+    document.getElementById('refreshFarmers').addEventListener('click', loadFarmers);
+    document.getElementById('refreshBookings').addEventListener('click', loadBookings);
+    document.getElementById('refreshProcurements').addEventListener('click', loadProcurements);
+    document.getElementById('refreshPayments').addEventListener('click', loadPayments);
+    loadCentres().catch(() => {}).finally(() => { loadFarmers(); loadBookings(); loadProcurements(); loadPayments(); });
+  </script>
+</body>
+</html>

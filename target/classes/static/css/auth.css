@@ -1,0 +1,19 @@
+:root { font-family: Arial, sans-serif; color: #173b27; background: #f4f8f1; }
+* { box-sizing: border-box; }
+body { min-height: 100vh; margin: 0; display: grid; grid-template-rows: 68px 1fr; }
+.site-header { padding: 0 6vw; display: flex; align-items: center; background: #fff; border-bottom: 1px solid #dce8d8; }
+.brand { display: inline-flex; align-items: center; gap: 10px; color: #23633a; font-size: 1.25rem; font-weight: 700; letter-spacing: .04em; text-decoration: none; }
+.brand-mark { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50% 50% 50% 8px; background: #2f7d45; color: #fff; font-size: .9rem; }
+.auth-card { width: min(400px, calc(100% - 40px)); align-self: center; justify-self: center; padding: 32px; background: #fff; border: 1px solid #dce8d8; border-radius: 14px; box-shadow: 0 6px 18px rgb(23 59 39 / 7%); }
+.eyebrow { margin: 0 0 8px; color: #4b7555; font-size: .82rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+h1 { margin: 0 0 24px; font-size: 1.8rem; }
+label { display: block; margin: 15px 0 6px; font-weight: 700; }
+input { width: 100%; padding: 12px; border: 1px solid #b9cfba; border-radius: 8px; color: #173b27; font-size: 1rem; }
+input:focus { outline: 3px solid #d6ead0; border-color: #2f7d45; }
+button { width: 100%; margin-top: 24px; padding: 12px; border: 1px solid #2f7d45; border-radius: 8px; background: #2f7d45; color: #fff; font-size: 1rem; font-weight: 700; cursor: pointer; }
+button:hover { background: #23633a; }
+.message { min-height: 20px; margin: 14px 0 0; color: #b42318; }
+.message.success { color: #23633a; }
+.link { margin: 20px 0 0; text-align: center; }
+.link a { color: #23633a; font-weight: 700; }
+@media (max-width: 500px) { body { grid-template-rows: 62px 1fr; } .site-header { padding: 0 20px; } .auth-card { width: min(100% - 32px, 400px); padding: 24px; } }
