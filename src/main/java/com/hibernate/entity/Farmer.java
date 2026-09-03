@@ -56,4 +56,34 @@ public class Farmer {
     public void setPin(String pin) {
         this.pin = pin;
     }
+
+    private String registeredCrops;
+
+    private String village;
+
+    private String procurementCentre;
+
+    public String getRegisteredCrops() {
+        return registeredCrops;
+    }
+
+    public void setRegisteredCrops(String registeredCrops) {
+        this.registeredCrops = registeredCrops;
+    }
+
+    public String getVillage() {
+        return village;
+    }
+
+    public void setVillage(String village) {
+        this.village = village;
+    }
+
+    public String getProcurementCentre() {
+        return procurementCentre;
+    }
+
+    public void setProcurementCentre(String procurementCentre) {
+        this.procurementCentre = procurementCentre;
+    }
 }

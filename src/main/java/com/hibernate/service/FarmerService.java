@@ -43,4 +43,24 @@ public class FarmerService {
 
         return farmer;
     }
+
+    public Farmer updateFarmerProfile(Long id, Farmer updatedData) {
+        Farmer farmer = getFarmerById(id);
+        if (updatedData.getName() != null && !updatedData.getName().isBlank()) {
+            farmer.setName(updatedData.getName().trim());
+        }
+        if (updatedData.getMobileNumber() != null && !updatedData.getMobileNumber().isBlank()) {
+            farmer.setMobileNumber(updatedData.getMobileNumber().trim());
+        }
+        if (updatedData.getRegisteredCrops() != null) {
+            farmer.setRegisteredCrops(updatedData.getRegisteredCrops().trim());
+        }
+        if (updatedData.getVillage() != null) {
+            farmer.setVillage(updatedData.getVillage().trim());
+        }
+        if (updatedData.getProcurementCentre() != null) {
+            farmer.setProcurementCentre(updatedData.getProcurementCentre().trim());
+        }
+        return farmerRepository.save(farmer);
+    }
 }

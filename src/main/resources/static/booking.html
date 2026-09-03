@@ -9,21 +9,35 @@
   <script src="js/theme.js"></script>
 </head>
 <body>
-  <header class="site-header"><a class="brand" href="dashboard.html"><span class="brand-mark">A</span><span>AgriQ</span></a><button class="nav-toggle" aria-expanded="false">Menu</button><nav class="primary-nav"><a href="dashboard.html">Dashboard</a><a href="booking.html" aria-current="page">Book Slot</a><a href="#my-bookings">My Bookings</a><a href="procurement.html">Procurement</a><a href="payment.html">Payment Status</a><a href="dashboard.html#profile">My Profile</a><button id="logout" class="nav-logout">Logout</button></nav></header>
+  <header class="site-header">
+    <a class="brand" href="dashboard.html"><span class="brand-mark" aria-hidden="true">A</span><span>AgriQ</span></a>
+    <button class="nav-toggle" aria-expanded="false">Menu</button>
+    <nav class="primary-nav" aria-label="Farmer navigation">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="booking.html" aria-current="page">Book Slot</a>
+      <a href="procurement.html">Procurement</a>
+      <a href="payment.html">Payment Status</a>
+      <a href="my-profile.html">My Profile</a>
+      <button id="logout" class="nav-logout">Logout</button>
+    </nav>
+  </header>
 
   <main class="booking-page">
     <section class="page-heading">
       <p class="eyebrow">Farmer services portal</p>
       <h1>Book a procurement slot</h1>
-      <p>Select a centre, date, and convenient time for your visit.</p>
+      <p>Schedule a convenient mandi visit and track your appointment history.</p>
     </section>
 
     <div class="booking-grid">
-      <section class="card" aria-labelledby="form-heading">
+      <!-- Left Column: Slot Booking Form -->
+      <section class="card form-card" aria-labelledby="form-heading">
         <h2 id="form-heading">Slot details</h2>
         <form id="bookingForm">
           <label for="centreId">Procurement Centre</label>
-          <select id="centreId" required><option value="">Loading centres...</option></select>
+          <select id="centreId" required>
+            <option value="">Loading centres...</option>
+          </select>
 
           <div id="locationCard" class="location-card" hidden>
             <span class="location-label">Centre location</span>
@@ -54,9 +68,18 @@
         </div>
       </section>
 
+      <!-- Right Column: My Bookings / Your Visits -->
       <section id="my-bookings" class="card bookings-card" aria-labelledby="bookings-heading">
-        <div class="section-title"><div><p class="eyebrow">Your visits</p><h2 id="bookings-heading">My Bookings</h2></div><button id="refreshBookings" class="text-button" type="button">Refresh</button></div>
-        <div id="bookingsList" class="bookings-list" aria-live="polite"><p class="empty-state">Loading your bookings...</p></div>
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Your visits</p>
+            <h2 id="bookings-heading">My Bookings</h2>
+          </div>
+          <button id="refreshBookings" class="text-button" type="button">Refresh</button>
+        </div>
+        <div id="bookingsList" class="bookings-list" aria-live="polite">
+          <p class="empty-state">Loading your bookings...</p>
+        </div>
       </section>
     </div>
   </main>
@@ -68,8 +91,17 @@
     if (!farmerId) {
       window.location.replace(sessionStorage.getItem('admin') === 'true' ? 'admin-dashboard.html' : 'index.html');
     }
-    document.querySelector('.nav-toggle').addEventListener('click', e => { const nav = document.querySelector('.primary-nav'); nav.classList.toggle('is-open'); e.currentTarget.setAttribute('aria-expanded', nav.classList.contains('is-open')); });
-    document.getElementById('logout').addEventListener('click', () => { sessionStorage.removeItem('farmer'); window.location.href = 'index.html'; });
+
+    document.querySelector('.nav-toggle').addEventListener('click', e => {
+      const nav = document.querySelector('.primary-nav');
+      nav.classList.toggle('is-open');
+      e.currentTarget.setAttribute('aria-expanded', nav.classList.contains('is-open'));
+    });
+
+    document.getElementById('logout').addEventListener('click', () => {
+      sessionStorage.removeItem('farmer');
+      window.location.href = 'index.html';
+    });
 
     const centreSelect = document.getElementById('centreId');
     const locationCard = document.getElementById('locationCard');
@@ -105,6 +137,7 @@
     });
 
     function formatDate(date) {
+      if (!date) return '—';
       return new Date(`${date}T00:00:00`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
     }
 

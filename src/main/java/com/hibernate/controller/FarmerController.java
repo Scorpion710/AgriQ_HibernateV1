@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,13 +35,17 @@ public class FarmerController {
     }
 
     @GetMapping("/{id}")
-    public Map<String, Object> getFarmerById(@PathVariable Long id) {
-        Farmer farmer = farmerService.getFarmerById(id);
-        return Map.of(
-                "id", farmer.getId(),
-                "name", farmer.getName(),
-                "mobileNumber", farmer.getMobileNumber()
-        );
+    public Farmer getFarmerById(@PathVariable Long id) {
+        return farmerService.getFarmerById(id);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateFarmerProfile(@PathVariable Long id, @RequestBody Farmer updatedData) {
+        try {
+            return ResponseEntity.ok(farmerService.updateFarmerProfile(id, updatedData));
+        } catch (RuntimeException exception) {
+            return ResponseEntity.badRequest().body(Map.of("message", exception.getMessage()));
+        }
     }
 
     @PostMapping("/login")

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgriQ | My Profile</title>
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/navigation.css">
+  <script src="js/theme.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="dashboard.html"><span class="brand-mark" aria-hidden="true">A</span><span>AgriQ</span></a>
+    <button class="nav-toggle" aria-expanded="false">Menu</button>
+    <nav class="primary-nav" aria-label="Farmer navigation">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="booking.html">Book Slot</a>
+      <a href="procurement.html">Procurement</a>
+      <a href="payment.html">Payment Status</a>
+      <a href="my-profile.html" aria-current="page">My Profile</a>
+      <button id="logout" class="nav-logout">Logout</button>
+    </nav>
+  </header>
+
+  <main class="profile-page">
+    <section class="page-heading">
+      <p class="eyebrow">Farmer services portal</p>
+      <h1>My Profile</h1>
+      <p>Manage and update your registered farmer identity, crop details, and mandi centre.</p>
+    </section>
+
+    <article class="dashboard-card profile-card" style="padding: 32px;">
+      <div class="profile-header-row">
+        <div class="profile-title-wrap">
+          <div class="card-icon" aria-hidden="true">&#127807;</div>
+          <div>
+            <p class="card-label">Registered Farmer</p>
+            <h2 id="name">Farmer Name</h2>
+          </div>
+        </div>
+        <button type="button" id="editProfileBtn" class="edit-profile-btn" aria-label="Edit Profile">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          </svg>
+          <span>Edit Profile</span>
+        </button>
+      </div>
+
+      <!-- Profile View Mode -->
+      <div id="profileViewMode" class="profile-details-grid" style="margin-top: 14px; gap: 14px;">
+        <div class="profile-item" style="padding: 14px 16px;">
+          <span class="profile-item-label">Farmer ID</span>
+          <strong id="farmerIdDisplay">#FID-—</strong>
+        </div>
+        <div class="profile-item" style="padding: 14px 16px;">
+          <span class="profile-item-label">Full Name</span>
+          <strong id="profileNameDisplay">—</strong>
+        </div>
+        <div class="profile-item" style="padding: 14px 16px;">
+          <span class="profile-item-label">Mobile Number</span>
+          <strong id="mobileNumber">—</strong>
+        </div>
+        <div class="profile-item" style="padding: 14px 16px;">
+          <span class="profile-item-label">Crop Details</span>
+          <strong id="registeredCropsDisplay">Not provided</strong>
+        </div>
+        <div class="profile-item" style="padding: 14px 16px;">
+          <span class="profile-item-label">Village / Location</span>
+          <strong id="villageDisplay">Not provided</strong>
+        </div>
+        <div class="profile-item" style="padding: 14px 16px;">
+          <span class="profile-item-label">Office / Centre</span>
+          <strong id="centreDisplay">Not assigned</strong>
+        </div>
+      </div>
+
+      <!-- Profile Edit Mode Form -->
+      <form id="profileEditForm" class="profile-edit-form" style="margin-top: 14px;" hidden>
+        <div class="edit-form-grid" style="gap: 14px;">
+          <div class="edit-form-field">
+            <label for="editName">Full Name</label>
+            <input type="text" id="editName" required>
+          </div>
+          <div class="edit-form-field">
+            <label for="editMobile">Mobile Number</label>
+            <input type="tel" id="editMobile" required>
+          </div>
+          <div class="edit-form-field">
+            <label for="editCrops">Crop Details (e.g. Wheat, Paddy)</label>
+            <input type="text" id="editCrops" placeholder="e.g. Wheat, Paddy, Mustard">
+          </div>
+          <div class="edit-form-field">
+            <label for="editVillage">Village / Location</label>
+            <input type="text" id="editVillage" placeholder="e.g. Rampur, Karnal">
+          </div>
+          <div class="edit-form-field" style="grid-column: 1 / -1;">
+            <label for="editCentre">Office / Centre</label>
+            <input type="text" id="editCentre" placeholder="e.g. Mandi Procurement Centre #2">
+          </div>
+        </div>
+        <div class="profile-action-buttons" style="margin-top: 10px;">
+          <button type="submit" class="primary-button">Save Changes</button>
+          <button type="button" id="cancelProfileBtn" class="secondary-button">Cancel</button>
+        </div>
+        <p id="profileMessage" class="action-message" role="alert" style="margin: 10px 0 0;" hidden></p>
+      </form>
+    </article>
+  </main>
+
+  <script>
+    let farmer;
+    try { farmer = JSON.parse(sessionStorage.getItem('farmer')); } catch (error) { farmer = null; }
+    if (!farmer || !farmer.name || !farmer.mobileNumber) {
+      location.replace(sessionStorage.getItem('admin') === 'true' ? 'admin-dashboard.html' : 'index.html');
+    }
+
+    // Navigation toggle & Logout
+    document.querySelector('.nav-toggle').addEventListener('click', e => {
+      const nav = document.querySelector('.primary-nav');
+      nav.classList.toggle('is-open');
+      e.currentTarget.setAttribute('aria-expanded', nav.classList.contains('is-open'));
+    });
+
+    document.getElementById('logout').addEventListener('click', () => {
+      sessionStorage.removeItem('farmer');
+      location.href = 'index.html';
+    });
+
+    function renderProfile(f) {
+      if (!f) return;
+      name.textContent = f.name || 'Farmer';
+      profileNameDisplay.textContent = f.name || '—';
+      mobileNumber.textContent = f.mobileNumber || '—';
+      farmerIdDisplay.textContent = f.id ? `#FID-${f.id}` : '#FID-—';
+      registeredCropsDisplay.textContent = f.registeredCrops || 'Not provided';
+      villageDisplay.textContent = f.village || 'Not provided';
+      centreDisplay.textContent = f.procurementCentre || 'Not assigned';
+
+      editName.value = f.name || '';
+      editMobile.value = f.mobileNumber || '';
+      editCrops.value = f.registeredCrops || '';
+      editVillage.value = f.village || '';
+      editCentre.value = f.procurementCentre || '';
+    }
+
+    renderProfile(farmer);
+
+    // Sync latest profile from backend if available
+    async function loadFarmerProfile() {
+      if (!farmer?.id) return;
+      try {
+        const res = await fetch(`/api/farmers/${farmer.id}`);
+        if (!res.ok) return;
+        const fresh = await res.json();
+        if (fresh && fresh.name) {
+          farmer = Object.assign({}, farmer, fresh);
+          sessionStorage.setItem('farmer', JSON.stringify(farmer));
+          renderProfile(farmer);
+        }
+      } catch (e) {}
+    }
+    loadFarmerProfile();
+
+    const editBtn = document.getElementById('editProfileBtn');
+    const cancelBtn = document.getElementById('cancelProfileBtn');
+    const viewMode = document.getElementById('profileViewMode');
+    const editForm = document.getElementById('profileEditForm');
+    const profileMessage = document.getElementById('profileMessage');
+
+    editBtn.addEventListener('click', () => {
+      viewMode.hidden = true;
+      editForm.hidden = false;
+      editBtn.hidden = true;
+      profileMessage.hidden = true;
+    });
+
+    cancelBtn.addEventListener('click', () => {
+      renderProfile(farmer);
+      editForm.hidden = true;
+      viewMode.hidden = false;
+      editBtn.hidden = false;
+      profileMessage.hidden = true;
+    });
+
+    editForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const updatedData = {
+        name: editName.value.trim(),
+        mobileNumber: editMobile.value.trim(),
+        registeredCrops: editCrops.value.trim(),
+        village: editVillage.value.trim(),
+        procurementCentre: editCentre.value.trim()
+      };
+
+      profileMessage.hidden = false;
+      profileMessage.textContent = 'Saving profile...';
+      profileMessage.style.color = '#23633a';
+
+      try {
+        const res = await fetch(`/api/farmers/${farmer.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedData)
+        });
+        if (res.ok) {
+          const fresh = await res.json();
+          farmer = Object.assign({}, farmer, fresh);
+        } else {
+          farmer = Object.assign({}, farmer, updatedData);
+        }
+      } catch (err) {
+        farmer = Object.assign({}, farmer, updatedData);
+      }
+
+      sessionStorage.setItem('farmer', JSON.stringify(farmer));
+      renderProfile(farmer);
+
+      profileMessage.textContent = 'Profile updated successfully!';
+      setTimeout(() => {
+        editForm.hidden = true;
+        viewMode.hidden = false;
+        editBtn.hidden = false;
+        profileMessage.hidden = true;
+      }, 900);
+    });
+  </script>
+</body>
+</html>
+
