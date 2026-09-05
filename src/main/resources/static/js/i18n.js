@@ -57,7 +57,6 @@ window.AgriQI18n = (() => {
       login_hero_footer: '© AgriQ Platform. Supporting Indian Agriculture.',
       login_welcome_back: 'Welcome Back',
       login_title: 'Farmer Login',
-      login_subtext: 'Enter your registered mobile number and PIN to access your account.',
       login_subtext: 'Enter your 12-digit Aadhaar number and PIN to access your account.',
       login_new_farmer: 'New Farmer?',
       login_register_here: 'Register here',
@@ -65,7 +64,6 @@ window.AgriQI18n = (() => {
       login_footer: 'AgriQ Farmer Portal • Secure Access',
       login_logging_in: 'Logging in...',
       login_success: 'Login successful. Redirecting...',
-      login_failed: 'Login failed. Please check your mobile number and PIN.',
       login_failed: 'Login failed. Please check your Aadhaar number and PIN.',
       login_network_error: 'Unable to connect to server. Please try again.',
 
@@ -261,7 +259,6 @@ window.AgriQI18n = (() => {
       login_hero_footer: '© एग्रीक्यू प्लेटफॉर्म। भारतीय कृषि का समर्थक।',
       login_welcome_back: 'वापसी पर स्वागत',
       login_title: 'किसान लॉगिन',
-      login_subtext: 'अपने पंजीकृत मोबाइल नंबर और 4-अंकीय पिन से अपने खाते में प्रवेश करें।',
       login_subtext: 'अपने खाते में प्रवेश करने के लिए अपना 12 अंकों का आधार नंबर और पिन दर्ज करें।',
       login_new_farmer: 'नए किसान?',
       login_register_here: 'यहाँ पंजीकरण करें',
@@ -269,7 +266,6 @@ window.AgriQI18n = (() => {
       login_footer: 'एग्रीक्यू किसान पोर्टल • सुरक्षित पहुंच',
       login_logging_in: 'लॉगिन किया जा रहा है...',
       login_success: 'लॉगिन सफल रहा। आगे बढ़ रहे हैं...',
-      login_failed: 'लॉगिन विफल रहा। कृपया मोबाइल नंबर और पिन जांचें।',
       login_failed: 'लॉगिन विफल रहा। कृपया अपना आधार नंबर और पिन जांचें।',
       login_network_error: 'सर्वर से जुड़ने में असमर्थ। कृपया पुन: प्रयास करें।',
 
@@ -465,7 +461,6 @@ window.AgriQI18n = (() => {
       login_hero_footer: '© अ‍ॅग्रीक्यू प्लॅटफॉर्म. भारतीय शेतीचा समर्थक.',
       login_welcome_back: 'पुन्हा स्वागत आहे',
       login_title: 'शेतकरी लॉगिन',
-      login_subtext: 'आपल्या खात्यात प्रवेश करण्यासाठी नोंदणीकृत मोबाइल नंबर आणि 4-अंकी पिन टाका.',
       login_subtext: 'आपल्या खात्यात प्रवेश करण्यासाठी आपला 12-अंकी आधार क्रमांक आणि पिन टाका.',
       login_new_farmer: 'नवीन शेतकरी?',
       login_register_here: 'येथे नोंदणी करा',
@@ -473,7 +468,6 @@ window.AgriQI18n = (() => {
       login_footer: 'अ‍ॅग्रीक्यू शेतकरी पोर्टल • सुरक्षित प्रवेश',
       login_logging_in: 'लॉगिन करत आहे...',
       login_success: 'लॉगिन यशस्वी झाले. पुढे जात आहे...',
-      login_failed: 'लॉगिन अयशस्वी. कृपया आपला मोबाइल नंबर आणि पिन तपासा.',
       login_failed: 'लॉगिन अयशस्वी. कृपया आपला आधार क्रमांक आणि पिन तपासा.',
       login_network_error: 'सर्व्हरशी कनेक्ट करण्यात अक्षम. कृपया पुन्हा प्रयत्न करा.',
 

@@ -79,7 +79,6 @@
           <span class="profile-item-label" data-i18n="prof_village">Village / Location</span>
           <strong id="villageDisplay">Not provided</strong>
         </div>
-        <div class="profile-item" style="padding: 14px 16px;">
         <div class="profile-item" style="padding: 14px 16px; grid-column: 1 / -1;">
           <span class="profile-item-label" data-i18n="prof_centre">Office / Centre</span>
           <strong id="centreDisplay">Not assigned</strong>
@@ -100,7 +99,6 @@
           </div>
           <div class="edit-form-field">
             <label for="editMobile" data-i18n="prof_mobile">Mobile Number</label>
-            <input type="tel" id="editMobile" required>
             <input type="tel" id="editMobile" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit mobile number" required>
           </div>
           <div class="edit-form-field">
@@ -111,7 +109,6 @@
             <label for="editVillage" data-i18n="prof_village">Village / Location</label>
             <input type="text" id="editVillage" data-i18n-placeholder="prof_village_placeholder" placeholder="e.g. Rampur, Karnal">
           </div>
-          <div class="edit-form-field" style="grid-column: 1 / -1;">
           <div class="edit-form-field">
             <label for="editCentre" data-i18n="prof_centre">Office / Centre</label>
             <input type="text" id="editCentre" data-i18n-placeholder="prof_centre_placeholder" placeholder="e.g. Mandi Procurement Centre #2">
@@ -129,7 +126,6 @@
   <script>
     let farmer;
     try { farmer = JSON.parse(sessionStorage.getItem('farmer')); } catch (error) { farmer = null; }
-    if (!farmer || !farmer.name || !farmer.mobileNumber) {
     if (!farmer || !farmer.name || (!farmer.mobileNumber && !farmer.aadhaarNumber)) {
       location.replace(sessionStorage.getItem('admin') === 'true' ? 'admin-dashboard.html' : 'index.html');
     }
@@ -227,7 +223,6 @@
 
       const updatedData = {
         name: editName.value.trim(),
-        mobileNumber: editMobile.value.trim(),
         mobileNumber: mobileVal,
         registeredCrops: editCrops.value.trim(),
         village: editVillage.value.trim(),

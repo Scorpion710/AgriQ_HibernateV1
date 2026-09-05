@@ -26,12 +26,9 @@
     <form id="register-form">
       <div class="form-group">
         <label for="name" data-i18n="reg_name_label">Farmer Name</label>
-        <input id="name" data-i18n-placeholder="reg_name_placeholder" placeholder="Enter your full name" required>
         <input id="name" data-i18n-placeholder="reg_name_placeholder" placeholder="Enter your full name" required autocomplete="name">
       </div>
       <div class="form-group">
-        <label for="mobileNumber" data-i18n="login_mobile_label">Mobile Number</label>
-        <input id="mobileNumber" type="tel" inputmode="numeric" data-i18n-placeholder="login_mobile_placeholder" placeholder="Enter 10-digit mobile number" required>
         <label for="aadhaarNumber" data-i18n="reg_aadhaar_label">Aadhaar Number</label>
         <input id="aadhaarNumber" type="text" inputmode="numeric" pattern="[0-9]{12}" maxlength="12" data-i18n-placeholder="reg_aadhaar_placeholder" placeholder="Enter 12-digit Aadhaar number" required autocomplete="off">
       </div>
@@ -41,7 +38,6 @@
       </div>
       <div class="form-group">
         <label for="pin" data-i18n="login_pin_label">4-digit PIN</label>
-        <input id="pin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="••••" required>
         <input id="pin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="••••" required autocomplete="new-password">
       </div>
       <button type="submit" class="btn-primary" data-i18n="reg_btn">Register</button>
@@ -97,7 +93,6 @@
         const response = await fetch('/api/farmers/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: form.name.value.trim(), mobileNumber: form.mobileNumber.value.trim(), pin: form.pin.value })
           body: JSON.stringify({ name, aadhaarNumber, mobileNumber, pin })
         });
         const data = await response.json().catch(() => ({}));

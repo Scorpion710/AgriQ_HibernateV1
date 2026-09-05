@@ -17,6 +17,9 @@ public class Farmer {
 
     private String name;
 
+    @Column(unique = true, length = 12)
+    private String aadhaarNumber;
+
     private String mobileNumber;
 
     @Column(nullable = false)
@@ -39,6 +42,14 @@ public class Farmer {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getAadhaarNumber() {
+        return aadhaarNumber;
+    }
+
+    public void setAadhaarNumber(String aadhaarNumber) {
+        this.aadhaarNumber = aadhaarNumber;
     }
 
     public String getMobileNumber() {

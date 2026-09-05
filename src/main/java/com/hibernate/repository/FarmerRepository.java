@@ -8,5 +8,7 @@ import com.hibernate.entity.Farmer;
 
 public interface FarmerRepository extends JpaRepository<Farmer, Long> {
 
+    Optional<Farmer> findByAadhaarNumber(String aadhaarNumber);
+
     Optional<Farmer> findByMobileNumber(String mobileNumber);
 }

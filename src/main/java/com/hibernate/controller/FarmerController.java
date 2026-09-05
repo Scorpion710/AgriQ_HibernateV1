@@ -52,7 +52,7 @@ public class FarmerController {
     @PostMapping("/login")
     public ResponseEntity<?> loginFarmer(@RequestBody Farmer farmer) {
         try {
-            return ResponseEntity.ok(farmerService.loginFarmer(farmer.getMobileNumber(), farmer.getPin()));
+            return ResponseEntity.ok(farmerService.loginFarmer(farmer.getAadhaarNumber(), farmer.getPin()));
         } catch (RuntimeException exception) {
             return ResponseEntity.badRequest().body(Map.of("message", exception.getMessage()));
         }

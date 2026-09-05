@@ -125,7 +125,6 @@
   <script>
     let farmer;
     try { farmer = JSON.parse(sessionStorage.getItem('farmer')); } catch (error) { farmer = null; }
-    if (!farmer || !farmer.name || !farmer.mobileNumber) {
     if (!farmer || !farmer.name || (!farmer.mobileNumber && !farmer.aadhaarNumber)) {
       location.replace(sessionStorage.getItem('admin') === 'true' ? 'admin-dashboard.html' : 'index.html');
     } else {

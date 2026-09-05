@@ -17,8 +17,26 @@ public class FarmerService {
     }
 
     public Farmer registerFarmer(Farmer farmer) {
-        if (farmerRepository.findByMobileNumber(farmer.getMobileNumber()).isPresent()) {
-            throw new RuntimeException("A farmer with this mobile number already exists.");
+        if (farmer.getName() == null || farmer.getName().isBlank()) {
+            throw new RuntimeException("Farmer name is required.");
+        }
+        if (farmer.getAadhaarNumber() == null || !farmer.getAadhaarNumber().trim().matches("^[0-9]{12}$")) {
+            throw new RuntimeException("Please enter a valid 12-digit Aadhaar number.");
+        }
+        if (farmer.getMobileNumber() == null || !farmer.getMobileNumber().trim().matches("^[0-9]{10}$")) {
+            throw new RuntimeException("Please enter a valid 10-digit mobile number.");
+        }
+        if (farmer.getPin() == null || !farmer.getPin().trim().matches("^[0-9]{4}$")) {
+            throw new RuntimeException("PIN must be a 4-digit numeric code.");
+        }
+
+        farmer.setName(farmer.getName().trim());
+        farmer.setAadhaarNumber(farmer.getAadhaarNumber().trim());
+        farmer.setMobileNumber(farmer.getMobileNumber().trim());
+        farmer.setPin(farmer.getPin().trim());
+
+        if (farmerRepository.findByAadhaarNumber(farmer.getAadhaarNumber()).isPresent()) {
+            throw new RuntimeException("A farmer with this Aadhaar number already exists.");
         }
 
         return farmerRepository.save(farmer);
@@ -33,9 +51,13 @@ public class FarmerService {
         return farmerRepository.findAll();
     }
 
-    public Farmer loginFarmer(String mobileNumber, String pin) {
-        Farmer farmer = farmerRepository.findByMobileNumber(mobileNumber)
-                .orElseThrow(() -> new RuntimeException("No farmer found with this mobile number."));
+    public Farmer loginFarmer(String aadhaarNumber, String pin) {
+        if (aadhaarNumber == null || !aadhaarNumber.trim().matches("^[0-9]{12}$")) {
+            throw new RuntimeException("Please enter a valid 12-digit Aadhaar number.");
+        }
+
+        Farmer farmer = farmerRepository.findByAadhaarNumber(aadhaarNumber.trim())
+                .orElseThrow(() -> new RuntimeException("No farmer found with this Aadhaar number."));
 
         if (!farmer.getPin().equals(pin)) {
             throw new RuntimeException("Incorrect PIN.");
