@@ -1,11 +1,11 @@
 package com.hibernate.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.hibernate.entity.Farmer;
 import com.hibernate.repository.FarmerRepository;
-
-import java.util.List;
 
 @Service
 public class FarmerService {

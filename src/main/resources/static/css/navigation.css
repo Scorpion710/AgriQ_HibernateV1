@@ -7,6 +7,8 @@ body { color: var(--ink); background: #f5f8f2; font-family: Inter, ui-sans-serif
 .primary-nav { display:flex; align-items:center; gap:3px; margin-left:auto; }
 .primary-nav a, .nav-logout { padding:9px 11px; border:0; border-radius:8px; background:transparent; color:#3d5645; font:inherit; font-size:.91rem; font-weight:650; text-decoration:none; white-space:nowrap; cursor:pointer; }
 .theme-toggle { padding:9px 11px; border:1px solid var(--line); border-radius:8px; background:transparent; color:inherit; font:inherit; font-size:.84rem; cursor:pointer; }
+.lang-select { padding:8px 10px; border:1px solid var(--line); border-radius:8px; background:white; color:#3d5645; font:inherit; font-size:.84rem; font-weight:650; cursor:pointer; outline:none; transition:border-color .2s; }
+.lang-select:focus { border-color:var(--green); }
 .primary-nav a:hover, .primary-nav a[aria-current="page"], .nav-logout:hover { color:var(--green-dark); background:var(--leaf); }
 .nav-toggle { display:none; margin-left:auto; padding:8px 10px; border:1px solid var(--line); border-radius:8px; background:white; color:var(--green-dark); font:inherit; font-weight:700; }
 .admin-shell { display:grid; grid-template-columns:235px minmax(0,1fr); min-height:100vh; }

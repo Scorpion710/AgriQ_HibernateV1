@@ -6,6 +6,7 @@
   <title>AgriQ | Farmer Login</title>
   <link rel="stylesheet" href="css/auth.css">
   <script src="js/theme.js"></script>
+  <script src="js/i18n.js"></script>
 </head>
 <body class="split-body">
   <div class="split-container">
@@ -21,10 +22,10 @@
       <div class="hero-main">
         <div class="hero-badge">
           <span class="hero-badge-dot" aria-hidden="true"></span>
-          <span>Farmer Services Portal</span>
+          <span data-i18n="login_hero_badge">Farmer Services Portal</span>
         </div>
-        <h2 class="hero-title">Empowering Farmers, Simplifying Procurement</h2>
-        <p class="hero-desc">Book procurement slots, track your queue, and manage your agricultural journey from one place.</p>
+        <h2 class="hero-title" data-i18n="login_hero_title">Empowering Farmers, Simplifying Procurement</h2>
+        <p class="hero-desc" data-i18n="login_hero_desc">Book procurement slots, track your queue, and manage your agricultural journey from one place.</p>
 
         <div class="hero-features">
           <div class="feature-chip">
@@ -37,8 +38,8 @@
               </svg>
             </div>
             <div>
-              <div class="feature-title">Easy Slot Booking</div>
-              <div class="feature-subtitle">Schedule timely mandi drop-offs</div>
+              <div class="feature-title" data-i18n="login_feature_1_title">Easy Slot Booking</div>
+              <div class="feature-subtitle" data-i18n="login_feature_1_desc">Schedule timely mandi drop-offs</div>
             </div>
           </div>
 
@@ -49,8 +50,8 @@
               </svg>
             </div>
             <div>
-              <div class="feature-title">Transparent MSP</div>
-              <div class="feature-subtitle">Fair rates & guaranteed support</div>
+              <div class="feature-title" data-i18n="login_feature_2_title">Transparent MSP</div>
+              <div class="feature-subtitle" data-i18n="login_feature_2_desc">Fair rates & guaranteed support</div>
             </div>
           </div>
 
@@ -61,15 +62,15 @@
               </svg>
             </div>
             <div>
-              <div class="feature-title">Faster Procurement</div>
-              <div class="feature-subtitle">Real-time digital token tracking</div>
+              <div class="feature-title" data-i18n="login_feature_3_title">Faster Procurement</div>
+              <div class="feature-subtitle" data-i18n="login_feature_3_desc">Real-time digital token tracking</div>
             </div>
           </div>
         </div>
       </div>
 
       <footer class="hero-footer">
-        <p>© AgriQ Platform. Supporting Indian Agriculture.</p>
+        <p data-i18n="login_hero_footer">© AgriQ Platform. Supporting Indian Agriculture.</p>
       </footer>
     </section>
 
@@ -80,31 +81,36 @@
           <span class="brand-mark" aria-hidden="true">A</span>
           <span>AgriQ</span>
         </a>
-        <button type="button" class="theme-toggle" aria-label="Toggle visual theme">Dark mode</button>
+        <select class="lang-select" aria-label="Select Language">
+          <option value="en">English</option>
+          <option value="hi">हिन्दी</option>
+          <option value="mr">मराठी</option>
+        </select>
+        <button type="button" class="theme-toggle" aria-label="Toggle visual theme" data-i18n="theme_dark">Dark mode</button>
       </div>
 
       <div class="login-content-wrap">
         <div class="login-card">
           <div class="login-card-header">
-            <p class="eyebrow">Welcome Back</p>
-            <h1>Farmer Login</h1>
-            <p class="subtext">Enter your registered mobile number and PIN to access your account.</p>
+            <p class="eyebrow" data-i18n="login_welcome_back">Welcome Back</p>
+            <h1 data-i18n="login_title">Farmer Login</h1>
+            <p class="subtext" data-i18n="login_subtext">Enter your registered mobile number and PIN to access your account.</p>
           </div>
 
           <form id="login-form">
             <div class="form-group">
-              <label for="mobileNumber">Mobile Number</label>
+              <label for="mobileNumber" data-i18n="login_mobile_label">Mobile Number</label>
               <div class="input-wrap">
                 <svg class="input-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
                   <line x1="12" y1="18" x2="12.01" y2="18"></line>
                 </svg>
-                <input id="mobileNumber" type="tel" inputmode="numeric" placeholder="Enter 10-digit mobile number" required>
+                <input id="mobileNumber" type="tel" inputmode="numeric" data-i18n-placeholder="login_mobile_placeholder" placeholder="Enter 10-digit mobile number" required>
               </div>
             </div>
 
             <div class="form-group">
-              <label for="pin">4-digit PIN</label>
+              <label for="pin" data-i18n="login_pin_label">4-digit PIN</label>
               <div class="input-wrap">
                 <svg class="input-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
@@ -114,20 +120,20 @@
               </div>
             </div>
 
-            <button type="submit" class="btn-primary">Login</button>
+            <button type="submit" class="btn-primary" data-i18n="login_btn">Login</button>
           </form>
 
           <p id="message" class="message" role="alert"></p>
 
           <div class="auth-links">
-            <p class="link">New Farmer? <a href="register.html">Register here</a></p>
-            <div class="link-divider">or</div>
+            <p class="link"><span data-i18n="login_new_farmer">New Farmer?</span> <a href="register.html" data-i18n="login_register_here">Register here</a></p>
+            <div class="link-divider" data-i18n="login_or">or</div>
             <p class="link link-admin">
               <a href="admin-login.html">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                 </svg>
-                <span>Admin login</span>
+                <span data-i18n="login_admin_link">Admin login</span>
               </a>
             </p>
           </div>
@@ -135,7 +141,7 @@
       </div>
 
       <div class="login-footer">
-        <p>AgriQ Farmer Portal &bull; Secure Access</p>
+        <p data-i18n="login_footer">AgriQ Farmer Portal &bull; Secure Access</p>
       </div>
     </main>
   </div>
@@ -146,18 +152,21 @@
     const message = document.getElementById('message');
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
-      message.textContent = '';
+      message.textContent = AgriQI18n.t('login_logging_in');
       try {
         const response = await fetch('/api/farmers/login', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ mobileNumber: form.mobileNumber.value.trim(), pin: form.pin.value })
         });
         const data = await response.json().catch(() => ({}));
-        if (!response.ok) { message.textContent = data.message || 'Login failed. Please check your details.'; return; }
+        if (!response.ok) {
+          message.textContent = data.message || AgriQI18n.t('login_failed');
+          return;
+        }
         sessionStorage.setItem('farmer', JSON.stringify(data));
         window.location.href = 'dashboard.html';
       } catch (error) {
-        message.textContent = 'Unable to connect. Please try again.';
+        message.textContent = AgriQI18n.t('login_network_error');
       }
     });
   </script>

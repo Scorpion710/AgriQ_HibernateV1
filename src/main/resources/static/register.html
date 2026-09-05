@@ -6,33 +6,41 @@
   <title>AgriQ | Farmer Registration</title>
   <link rel="stylesheet" href="css/auth.css">
   <script src="js/theme.js"></script>
+  <script src="js/i18n.js"></script>
 </head>
 <body>
-  <header class="site-header">
+  <header class="site-header" style="display: flex; align-items: center; justify-content: space-between; padding: 16px 24px;">
     <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">A</span><span>AgriQ</span></a>
-    <button type="button" class="theme-toggle" aria-label="Toggle theme">Dark mode</button>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <select class="lang-select" aria-label="Select Language">
+        <option value="en">English</option>
+        <option value="hi">हिन्दी</option>
+        <option value="mr">मराठी</option>
+      </select>
+      <button type="button" class="theme-toggle" aria-label="Toggle theme" data-i18n="theme_dark">Dark mode</button>
+    </div>
   </header>
   <main class="auth-card">
-    <p class="eyebrow">Farmer services portal</p>
-    <h1>Farmer Registration</h1>
+    <p class="eyebrow" data-i18n="farmer_services_portal">Farmer services portal</p>
+    <h1 data-i18n="reg_title">Farmer Registration</h1>
     <form id="register-form">
       <div class="form-group">
-        <label for="name">Farmer Name</label>
-        <input id="name" placeholder="Enter your full name" required>
+        <label for="name" data-i18n="reg_name_label">Farmer Name</label>
+        <input id="name" data-i18n-placeholder="reg_name_placeholder" placeholder="Enter your full name" required>
       </div>
       <div class="form-group">
-        <label for="mobileNumber">Mobile Number</label>
-        <input id="mobileNumber" type="tel" inputmode="numeric" placeholder="Enter 10-digit mobile number" required>
+        <label for="mobileNumber" data-i18n="login_mobile_label">Mobile Number</label>
+        <input id="mobileNumber" type="tel" inputmode="numeric" data-i18n-placeholder="login_mobile_placeholder" placeholder="Enter 10-digit mobile number" required>
       </div>
       <div class="form-group">
-        <label for="pin">4-digit PIN</label>
+        <label for="pin" data-i18n="login_pin_label">4-digit PIN</label>
         <input id="pin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="••••" required>
       </div>
-      <button type="submit" class="btn-primary">Register</button>
+      <button type="submit" class="btn-primary" data-i18n="reg_btn">Register</button>
     </form>
     <p id="message" class="message" role="alert"></p>
     <div class="auth-links">
-      <p class="link"><a href="index.html">Back to Login</a></p>
+      <p class="link"><a href="index.html" data-i18n="reg_back_login">Back to Login</a></p>
     </div>
   </main>
   <script>
@@ -50,14 +58,14 @@
         });
         const data = await response.json().catch(() => ({}));
         if (!response.ok) {
-          message.textContent = data.message || 'Registration failed. Please try again.';
+          message.textContent = data.message || AgriQI18n.t('reg_failed');
           return;
         }
-        message.textContent = 'Registration successful. Redirecting to login...';
+        message.textContent = AgriQI18n.t('reg_success');
         message.classList.add('success');
         setTimeout(() => { window.location.href = 'index.html'; }, 1200);
       } catch (error) {
-        message.textContent = 'Unable to connect. Please try again.';
+        message.textContent = AgriQI18n.t('reg_network_error');
       }
     });
   </script>

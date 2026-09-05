@@ -1,9 +1,10 @@
 package com.hibernate.repository;
 
-import com.hibernate.entity.Farmer;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+import com.hibernate.entity.Farmer;
 
 public interface FarmerRepository extends JpaRepository<Farmer, Long> {
 

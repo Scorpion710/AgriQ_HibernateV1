@@ -8,64 +8,70 @@
   <link rel="stylesheet" href="css/navigation.css">
   <script src="js/msp.js"></script>
   <script src="js/theme.js"></script>
+  <script src="js/i18n.js"></script>
 </head>
 <body>
   <header class="site-header">
-    <a class="brand" href="dashboard.html"><span class="brand-mark">A</span><span>AgriQ</span></a>
-    <button class="nav-toggle" aria-expanded="false">Menu</button>
-    <nav class="primary-nav">
-      <a href="dashboard.html">Dashboard</a>
-      <a href="booking.html">Book Slot</a>
-      <a href="procurement.html" aria-current="page">Procurement</a>
-      <a href="payment.html">Payment Status</a>
-      <a href="my-profile.html">My Profile</a>
-      <button id="logout" class="nav-logout">Logout</button>
+    <a class="brand" href="dashboard.html"><span class="brand-mark" aria-hidden="true">A</span><span>AgriQ</span></a>
+    <button class="nav-toggle" aria-expanded="false" data-i18n="nav_menu">Menu</button>
+    <nav class="primary-nav" aria-label="Farmer navigation">
+      <a href="dashboard.html" data-i18n="nav_dashboard">Dashboard</a>
+      <a href="booking.html" data-i18n="nav_book_slot">Book Slot</a>
+      <a href="procurement.html" aria-current="page" data-i18n="nav_procurement">Procurement</a>
+      <a href="payment.html" data-i18n="nav_payment_status">Payment Status</a>
+      <a href="my-profile.html" data-i18n="nav_my_profile">My Profile</a>
+      <select class="lang-select" aria-label="Select Language">
+        <option value="en">English</option>
+        <option value="hi">हिन्दी</option>
+        <option value="mr">मराठी</option>
+      </select>
+      <button id="logout" class="nav-logout" data-i18n="nav_logout">Logout</button>
     </nav>
   </header>
 
   <main class="payment-page">
     <section class="page-heading">
-      <p class="eyebrow">Farmer services portal</p>
-      <h1>Digital procurement recording</h1>
-      <p>Record crop procurement and view your previous records.</p>
+      <p class="eyebrow" data-i18n="farmer_services_portal">Farmer services portal</p>
+      <h1 data-i18n="proc_title">Digital procurement recording</h1>
+      <p data-i18n="proc_subtitle">Record crop procurement and view your previous records.</p>
     </section>
 
     <section class="payment-layout">
       <section class="card form-card" aria-labelledby="form-heading">
-        <h2 id="form-heading">Procurement details</h2>
+        <h2 id="form-heading" data-i18n="proc_form_heading">Procurement details</h2>
         <form id="procurementForm">
-          <label for="cropName">Crop Name</label>
+          <label for="cropName" data-i18n="proc_crop_label">Crop Name</label>
           <select id="cropName" required>
-            <option value="">Select a crop</option>
+            <option value="" data-i18n="proc_select_crop">Select a crop</option>
           </select>
 
           <div class="form-row">
             <div>
-              <label for="quantityKg">Quantity (kg)</label>
+              <label for="quantityKg" data-i18n="proc_quantity_label">Quantity (kg)</label>
               <input id="quantityKg" type="number" min="0.01" step="0.01" placeholder="e.g. 100" required>
             </div>
             <div>
-              <label for="grade">Grade</label>
+              <label for="grade" data-i18n="proc_grade_label">Grade</label>
               <select id="grade" required>
-                <option value="Grade A" selected>Grade A (Premium)</option>
-                <option value="Grade B">Grade B (Standard FAQ)</option>
-                <option value="Grade C">Grade C (Commercial)</option>
+                <option value="Grade A" selected data-i18n="proc_grade_a">Grade A (Premium)</option>
+                <option value="Grade B" data-i18n="proc_grade_b">Grade B (Standard FAQ)</option>
+                <option value="Grade C" data-i18n="proc_grade_c">Grade C (Commercial)</option>
               </select>
             </div>
           </div>
 
-          <label for="mspPerKg">Government MSP per kg (₹)</label>
-          <input id="mspPerKg" type="text" readonly tabindex="-1" placeholder="Auto-loaded on crop & grade" aria-readonly="true">
+          <label for="mspPerKg" data-i18n="proc_msp_label">Government MSP per kg (₹)</label>
+          <input id="mspPerKg" type="text" readonly tabindex="-1" data-i18n-placeholder="proc_msp_placeholder" placeholder="Auto-loaded on crop & grade" aria-readonly="true">
 
           <div class="location-card" aria-live="polite">
-            <span class="location-label">Calculated total amount</span>
+            <span class="location-label" data-i18n="proc_total_label">Calculated total amount</span>
             <strong id="totalAmount">₹0.00</strong>
           </div>
 
-          <label for="procurementDate">Procurement Date</label>
+          <label for="procurementDate" data-i18n="proc_date_label">Procurement Date</label>
           <input id="procurementDate" type="date" required>
 
-          <button class="primary-button" type="submit">Record Procurement</button>
+          <button class="primary-button" type="submit" data-i18n="proc_submit_btn">Record Procurement</button>
         </form>
         <p id="formMessage" class="form-message" role="alert" aria-live="polite"></p>
       </section>
@@ -73,25 +79,25 @@
       <section class="card records-card" aria-labelledby="records-heading">
         <div class="section-title">
           <div>
-            <p class="eyebrow">Your records</p>
-            <h2 id="records-heading">Previous Procurements</h2>
+            <p class="eyebrow" data-i18n="proc_records_eyebrow">Your records</p>
+            <h2 id="records-heading" data-i18n="proc_records_heading">Previous Procurements</h2>
           </div>
-          <button id="refreshRecords" class="text-button" type="button">Refresh</button>
+          <button id="refreshRecords" class="text-button" type="button" data-i18n="btn_refresh">Refresh</button>
         </div>
         <div class="table-scroll">
           <table>
             <thead>
               <tr>
-                <th>Crop</th>
-                <th>Quantity</th>
-                <th>Grade</th>
-                <th>MSP/kg</th>
-                <th>Total</th>
-                <th>Date</th>
+                <th data-i18n="th_crop">Crop</th>
+                <th data-i18n="th_quantity">Quantity</th>
+                <th data-i18n="th_grade">Grade</th>
+                <th data-i18n="th_msp_kg">MSP/kg</th>
+                <th data-i18n="th_total">Total</th>
+                <th data-i18n="th_date">Date</th>
               </tr>
             </thead>
             <tbody id="procurementRows">
-              <tr><td colspan="6" class="empty-state">Loading procurement records...</td></tr>
+              <tr><td colspan="6" class="empty-state" data-i18n="proc_loading">Loading procurement records...</td></tr>
             </tbody>
           </table>
         </div>
@@ -122,16 +128,21 @@
     const totalAmount = document.getElementById('totalAmount');
     const formMessage = document.getElementById('formMessage');
     const rows = document.getElementById('procurementRows');
+    let cachedProcurements = [];
 
-    // Populate crops from the single reusable AgriQMSP mapping
-    cropSelect.innerHTML = '<option value="">Select a crop</option>';
-    Object.keys(AgriQMSP.rates).forEach(crop => {
-      const option = document.createElement('option');
-      option.value = crop;
-      option.textContent = crop;
-      cropSelect.appendChild(option);
-    });
+    function populateCrops() {
+      const currentVal = cropSelect.value;
+      cropSelect.innerHTML = `<option value="">${AgriQI18n.t('proc_select_crop')}</option>`;
+      Object.keys(AgriQMSP.rates).forEach(crop => {
+        const option = document.createElement('option');
+        option.value = crop;
+        option.textContent = AgriQI18n.crop(crop);
+        if (crop === currentVal) option.selected = true;
+        cropSelect.appendChild(option);
+      });
+    }
 
+    populateCrops();
     document.getElementById('procurementDate').value = new Date().toISOString().split('T')[0];
 
     function updateTotal() {
@@ -153,7 +164,9 @@
 
     function formatDate(date) {
       if (!date) return '—';
-      return new Date(`${date}T00:00:00`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+      const lang = AgriQI18n.getLanguage();
+      const locale = lang === 'hi' ? 'hi-IN' : (lang === 'mr' ? 'mr-IN' : 'en-IN');
+      return new Date(`${date}T00:00:00`).toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' });
     }
 
     function addCell(row, value) {
@@ -164,7 +177,7 @@
 
     function procurementRow(procurement) {
       const row = document.createElement('tr');
-      addCell(row, procurement.cropName);
+      addCell(row, AgriQI18n.crop(procurement.cropName));
       addCell(row, `${Number(procurement.quantityKg).toFixed(2)} kg`);
       addCell(row, procurement.grade || 'Grade A');
       addCell(row, `₹${Number(procurement.mspPerKg).toFixed(2)}`);
@@ -173,21 +186,26 @@
       return row;
     }
 
+    function renderProcurements(procurements) {
+      cachedProcurements = procurements || [];
+      rows.innerHTML = '';
+      if (!cachedProcurements.length) {
+        rows.innerHTML = `<tr><td colspan="6" class="empty-state">${AgriQI18n.t('proc_empty')}</td></tr>`;
+        return;
+      }
+      cachedProcurements.forEach((procurement) => rows.appendChild(procurementRow(procurement)));
+    }
+
     async function loadProcurements() {
       if (!farmerId) return;
-      rows.innerHTML = '<tr><td colspan="6" class="empty-state">Loading procurement records...</td></tr>';
+      rows.innerHTML = `<tr><td colspan="6" class="empty-state">${AgriQI18n.t('proc_loading')}</td></tr>`;
       try {
         const response = await fetch(`/api/procurements/farmer/${farmerId}`);
         if (!response.ok) throw new Error();
         const procurements = await response.json();
-        rows.innerHTML = '';
-        if (!procurements.length) {
-          rows.innerHTML = '<tr><td colspan="6" class="empty-state">No procurement records have been added.</td></tr>';
-          return;
-        }
-        procurements.forEach((procurement) => rows.appendChild(procurementRow(procurement)));
+        renderProcurements(procurements);
       } catch (error) {
-        rows.innerHTML = '<tr><td colspan="6" class="empty-state error-state">Unable to load procurement records.</td></tr>';
+        rows.innerHTML = `<tr><td colspan="6" class="empty-state error-state">${AgriQI18n.t('proc_error')}</td></tr>`;
       }
     }
 
@@ -198,12 +216,12 @@
       const grade = gradeSelect.value || 'Grade A';
       const msp = AgriQMSP.get(crop, grade);
       if (msp === null) {
-        formMessage.textContent = 'Government MSP is not configured for this crop and grade.';
+        formMessage.textContent = AgriQI18n.t('proc_msp_not_configured');
         return;
       }
       const quantity = Number(quantityInput.value);
       if (!quantity || quantity <= 0) {
-        formMessage.textContent = 'Please enter a valid quantity.';
+        formMessage.textContent = AgriQI18n.t('proc_invalid_qty');
         return;
       }
       const total = Number((quantity * msp).toFixed(2));
@@ -223,7 +241,7 @@
           body: JSON.stringify(procurement)
         });
         if (!response.ok) throw new Error();
-        formMessage.textContent = 'Procurement recorded successfully.';
+        formMessage.textContent = AgriQI18n.t('proc_success');
         AgriQMSP.save({ crop, grade, quantity, msp, totalAmount: total });
         form.reset();
         gradeSelect.value = 'Grade A';
@@ -231,7 +249,7 @@
         updateTotal();
         await loadProcurements();
       } catch (error) {
-        formMessage.textContent = 'Unable to record procurement. Please try again.';
+        formMessage.textContent = AgriQI18n.t('proc_error');
       }
     });
 
@@ -245,6 +263,14 @@
 
     updateTotal();
     loadProcurements();
+
+    // Re-render when language changes
+    window.addEventListener('agriq-lang-change', () => {
+      populateCrops();
+      if (cachedProcurements.length) {
+        renderProcurements(cachedProcurements);
+      }
+    });
   </script>
 </body>
 </html>

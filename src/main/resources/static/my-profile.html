@@ -7,26 +7,32 @@
   <link rel="stylesheet" href="css/dashboard.css">
   <link rel="stylesheet" href="css/navigation.css">
   <script src="js/theme.js"></script>
+  <script src="js/i18n.js"></script>
 </head>
 <body>
   <header class="site-header">
     <a class="brand" href="dashboard.html"><span class="brand-mark" aria-hidden="true">A</span><span>AgriQ</span></a>
-    <button class="nav-toggle" aria-expanded="false">Menu</button>
+    <button class="nav-toggle" aria-expanded="false" data-i18n="nav_menu">Menu</button>
     <nav class="primary-nav" aria-label="Farmer navigation">
-      <a href="dashboard.html">Dashboard</a>
-      <a href="booking.html">Book Slot</a>
-      <a href="procurement.html">Procurement</a>
-      <a href="payment.html">Payment Status</a>
-      <a href="my-profile.html" aria-current="page">My Profile</a>
-      <button id="logout" class="nav-logout">Logout</button>
+      <a href="dashboard.html" data-i18n="nav_dashboard">Dashboard</a>
+      <a href="booking.html" data-i18n="nav_book_slot">Book Slot</a>
+      <a href="procurement.html" data-i18n="nav_procurement">Procurement</a>
+      <a href="payment.html" data-i18n="nav_payment_status">Payment Status</a>
+      <a href="my-profile.html" aria-current="page" data-i18n="nav_my_profile">My Profile</a>
+      <select class="lang-select" aria-label="Select Language">
+        <option value="en">English</option>
+        <option value="hi">हिन्दी</option>
+        <option value="mr">मराठी</option>
+      </select>
+      <button id="logout" class="nav-logout" data-i18n="nav_logout">Logout</button>
     </nav>
   </header>
 
   <main class="profile-page">
     <section class="page-heading">
-      <p class="eyebrow">Farmer services portal</p>
-      <h1>My Profile</h1>
-      <p>Manage and update your registered farmer identity, crop details, and mandi centre.</p>
+      <p class="eyebrow" data-i18n="farmer_services_portal">Farmer services portal</p>
+      <h1 data-i18n="prof_title">My Profile</h1>
+      <p data-i18n="prof_subtitle">Manage and update your registered farmer identity, crop details, and mandi centre.</p>
     </section>
 
     <article class="dashboard-card profile-card" style="padding: 32px;">
@@ -34,7 +40,7 @@
         <div class="profile-title-wrap">
           <div class="card-icon" aria-hidden="true">&#127807;</div>
           <div>
-            <p class="card-label">Registered Farmer</p>
+            <p class="card-label" data-i18n="prof_card_label">Registered Farmer</p>
             <h2 id="name">Farmer Name</h2>
           </div>
         </div>
@@ -43,34 +49,34 @@
             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
           </svg>
-          <span>Edit Profile</span>
+          <span data-i18n="prof_edit_btn">Edit Profile</span>
         </button>
       </div>
 
       <!-- Profile View Mode -->
       <div id="profileViewMode" class="profile-details-grid" style="margin-top: 14px; gap: 14px;">
         <div class="profile-item" style="padding: 14px 16px;">
-          <span class="profile-item-label">Farmer ID</span>
+          <span class="profile-item-label" data-i18n="prof_farmer_id">Farmer ID</span>
           <strong id="farmerIdDisplay">#FID-—</strong>
         </div>
         <div class="profile-item" style="padding: 14px 16px;">
-          <span class="profile-item-label">Full Name</span>
+          <span class="profile-item-label" data-i18n="prof_full_name">Full Name</span>
           <strong id="profileNameDisplay">—</strong>
         </div>
         <div class="profile-item" style="padding: 14px 16px;">
-          <span class="profile-item-label">Mobile Number</span>
+          <span class="profile-item-label" data-i18n="prof_mobile">Mobile Number</span>
           <strong id="mobileNumber">—</strong>
         </div>
         <div class="profile-item" style="padding: 14px 16px;">
-          <span class="profile-item-label">Crop Details</span>
+          <span class="profile-item-label" data-i18n="prof_crop_details">Crop Details</span>
           <strong id="registeredCropsDisplay">Not provided</strong>
         </div>
         <div class="profile-item" style="padding: 14px 16px;">
-          <span class="profile-item-label">Village / Location</span>
+          <span class="profile-item-label" data-i18n="prof_village">Village / Location</span>
           <strong id="villageDisplay">Not provided</strong>
         </div>
         <div class="profile-item" style="padding: 14px 16px;">
-          <span class="profile-item-label">Office / Centre</span>
+          <span class="profile-item-label" data-i18n="prof_centre">Office / Centre</span>
           <strong id="centreDisplay">Not assigned</strong>
         </div>
       </div>
@@ -79,29 +85,29 @@
       <form id="profileEditForm" class="profile-edit-form" style="margin-top: 14px;" hidden>
         <div class="edit-form-grid" style="gap: 14px;">
           <div class="edit-form-field">
-            <label for="editName">Full Name</label>
+            <label for="editName" data-i18n="prof_full_name">Full Name</label>
             <input type="text" id="editName" required>
           </div>
           <div class="edit-form-field">
-            <label for="editMobile">Mobile Number</label>
+            <label for="editMobile" data-i18n="prof_mobile">Mobile Number</label>
             <input type="tel" id="editMobile" required>
           </div>
           <div class="edit-form-field">
-            <label for="editCrops">Crop Details (e.g. Wheat, Paddy)</label>
-            <input type="text" id="editCrops" placeholder="e.g. Wheat, Paddy, Mustard">
+            <label for="editCrops" data-i18n="prof_crop_details">Crop Details</label>
+            <input type="text" id="editCrops" data-i18n-placeholder="prof_crop_placeholder" placeholder="e.g. Wheat, Paddy, Mustard">
           </div>
           <div class="edit-form-field">
-            <label for="editVillage">Village / Location</label>
-            <input type="text" id="editVillage" placeholder="e.g. Rampur, Karnal">
+            <label for="editVillage" data-i18n="prof_village">Village / Location</label>
+            <input type="text" id="editVillage" data-i18n-placeholder="prof_village_placeholder" placeholder="e.g. Rampur, Karnal">
           </div>
           <div class="edit-form-field" style="grid-column: 1 / -1;">
-            <label for="editCentre">Office / Centre</label>
-            <input type="text" id="editCentre" placeholder="e.g. Mandi Procurement Centre #2">
+            <label for="editCentre" data-i18n="prof_centre">Office / Centre</label>
+            <input type="text" id="editCentre" data-i18n-placeholder="prof_centre_placeholder" placeholder="e.g. Mandi Procurement Centre #2">
           </div>
         </div>
         <div class="profile-action-buttons" style="margin-top: 10px;">
-          <button type="submit" class="primary-button">Save Changes</button>
-          <button type="button" id="cancelProfileBtn" class="secondary-button">Cancel</button>
+          <button type="submit" class="primary-button" data-i18n="btn_save">Save Changes</button>
+          <button type="button" id="cancelProfileBtn" class="secondary-button" data-i18n="btn_cancel">Cancel</button>
         </div>
         <p id="profileMessage" class="action-message" role="alert" style="margin: 10px 0 0;" hidden></p>
       </form>
@@ -133,9 +139,9 @@
       profileNameDisplay.textContent = f.name || '—';
       mobileNumber.textContent = f.mobileNumber || '—';
       farmerIdDisplay.textContent = f.id ? `#FID-${f.id}` : '#FID-—';
-      registeredCropsDisplay.textContent = f.registeredCrops || 'Not provided';
-      villageDisplay.textContent = f.village || 'Not provided';
-      centreDisplay.textContent = f.procurementCentre || 'Not assigned';
+      registeredCropsDisplay.textContent = f.registeredCrops || AgriQI18n.t('prof_not_provided');
+      villageDisplay.textContent = f.village || AgriQI18n.t('prof_not_provided');
+      centreDisplay.textContent = f.procurementCentre || AgriQI18n.t('prof_not_assigned');
 
       editName.value = f.name || '';
       editMobile.value = f.mobileNumber || '';
@@ -194,7 +200,7 @@
       };
 
       profileMessage.hidden = false;
-      profileMessage.textContent = 'Saving profile...';
+      profileMessage.textContent = AgriQI18n.t('prof_saving');
       profileMessage.style.color = '#23633a';
 
       try {
@@ -216,7 +222,7 @@
       sessionStorage.setItem('farmer', JSON.stringify(farmer));
       renderProfile(farmer);
 
-      profileMessage.textContent = 'Profile updated successfully!';
+      profileMessage.textContent = AgriQI18n.t('prof_saved');
       setTimeout(() => {
         editForm.hidden = true;
         viewMode.hidden = false;
@@ -224,7 +230,10 @@
         profileMessage.hidden = true;
       }, 900);
     });
+
+    window.addEventListener('agriq-lang-change', () => {
+      renderProfile(farmer);
+    });
   </script>
 </body>
 </html>
-
