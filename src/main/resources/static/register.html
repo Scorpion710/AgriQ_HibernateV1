@@ -27,14 +27,22 @@
       <div class="form-group">
         <label for="name" data-i18n="reg_name_label">Farmer Name</label>
         <input id="name" data-i18n-placeholder="reg_name_placeholder" placeholder="Enter your full name" required>
+        <input id="name" data-i18n-placeholder="reg_name_placeholder" placeholder="Enter your full name" required autocomplete="name">
       </div>
       <div class="form-group">
         <label for="mobileNumber" data-i18n="login_mobile_label">Mobile Number</label>
         <input id="mobileNumber" type="tel" inputmode="numeric" data-i18n-placeholder="login_mobile_placeholder" placeholder="Enter 10-digit mobile number" required>
+        <label for="aadhaarNumber" data-i18n="reg_aadhaar_label">Aadhaar Number</label>
+        <input id="aadhaarNumber" type="text" inputmode="numeric" pattern="[0-9]{12}" maxlength="12" data-i18n-placeholder="reg_aadhaar_placeholder" placeholder="Enter 12-digit Aadhaar number" required autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label for="mobileNumber" data-i18n="reg_mobile_label">Mobile Number</label>
+        <input id="mobileNumber" type="tel" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" data-i18n-placeholder="reg_mobile_placeholder" placeholder="Enter 10-digit mobile number" required autocomplete="tel">
       </div>
       <div class="form-group">
         <label for="pin" data-i18n="login_pin_label">4-digit PIN</label>
         <input id="pin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="••••" required>
+        <input id="pin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="••••" required autocomplete="new-password">
       </div>
       <button type="submit" class="btn-primary" data-i18n="reg_btn">Register</button>
     </form>
@@ -46,15 +54,51 @@
   <script>
     const form = document.getElementById('register-form');
     const message = document.getElementById('message');
+    const aadhaarInput = document.getElementById('aadhaarNumber');
+    const mobileInput = document.getElementById('mobileNumber');
+    const pinInput = document.getElementById('pin');
+
+    aadhaarInput.addEventListener('input', () => {
+      aadhaarInput.value = aadhaarInput.value.replace(/\D/g, '').slice(0, 12);
+    });
+
+    mobileInput.addEventListener('input', () => {
+      mobileInput.value = mobileInput.value.replace(/\D/g, '').slice(0, 10);
+    });
+
+    pinInput.addEventListener('input', () => {
+      pinInput.value = pinInput.value.replace(/\D/g, '').slice(0, 4);
+    });
+
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       message.textContent = '';
       message.className = 'message';
+
+      const name = form.name.value.trim();
+      const aadhaarNumber = aadhaarInput.value.trim();
+      const mobileNumber = mobileInput.value.trim();
+      const pin = pinInput.value.trim();
+
+      if (!/^[0-9]{12}$/.test(aadhaarNumber)) {
+        message.textContent = AgriQI18n.t('reg_aadhaar_invalid');
+        return;
+      }
+      if (!/^[0-9]{10}$/.test(mobileNumber)) {
+        message.textContent = AgriQI18n.t('reg_mobile_invalid');
+        return;
+      }
+      if (!/^[0-9]{4}$/.test(pin)) {
+        message.textContent = AgriQI18n.t('reg_pin_invalid');
+        return;
+      }
+
       try {
         const response = await fetch('/api/farmers/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name: form.name.value.trim(), mobileNumber: form.mobileNumber.value.trim(), pin: form.pin.value })
+          body: JSON.stringify({ name, aadhaarNumber, mobileNumber, pin })
         });
         const data = await response.json().catch(() => ({}));
         if (!response.ok) {

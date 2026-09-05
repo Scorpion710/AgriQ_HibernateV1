@@ -64,6 +64,10 @@
           <strong id="profileNameDisplay">—</strong>
         </div>
         <div class="profile-item" style="padding: 14px 16px;">
+          <span class="profile-item-label" data-i18n="prof_aadhaar">Aadhaar Number</span>
+          <strong id="aadhaarNumberDisplay">XXXX XXXX —</strong>
+        </div>
+        <div class="profile-item" style="padding: 14px 16px;">
           <span class="profile-item-label" data-i18n="prof_mobile">Mobile Number</span>
           <strong id="mobileNumber">—</strong>
         </div>
@@ -76,6 +80,7 @@
           <strong id="villageDisplay">Not provided</strong>
         </div>
         <div class="profile-item" style="padding: 14px 16px;">
+        <div class="profile-item" style="padding: 14px 16px; grid-column: 1 / -1;">
           <span class="profile-item-label" data-i18n="prof_centre">Office / Centre</span>
           <strong id="centreDisplay">Not assigned</strong>
         </div>
@@ -89,8 +94,14 @@
             <input type="text" id="editName" required>
           </div>
           <div class="edit-form-field">
+            <label for="editAadhaar" data-i18n="prof_aadhaar">Aadhaar Number</label>
+            <input type="text" id="editAadhaar" readonly disabled style="cursor: not-allowed; opacity: 0.75;" title="Aadhaar number cannot be modified">
+            <small style="font-size: 0.75rem; opacity: 0.7; margin-top: 4px; display: block;" data-i18n="prof_aadhaar_readonly_note">Aadhaar cannot be changed</small>
+          </div>
+          <div class="edit-form-field">
             <label for="editMobile" data-i18n="prof_mobile">Mobile Number</label>
             <input type="tel" id="editMobile" required>
+            <input type="tel" id="editMobile" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit mobile number" required>
           </div>
           <div class="edit-form-field">
             <label for="editCrops" data-i18n="prof_crop_details">Crop Details</label>
@@ -101,6 +112,7 @@
             <input type="text" id="editVillage" data-i18n-placeholder="prof_village_placeholder" placeholder="e.g. Rampur, Karnal">
           </div>
           <div class="edit-form-field" style="grid-column: 1 / -1;">
+          <div class="edit-form-field">
             <label for="editCentre" data-i18n="prof_centre">Office / Centre</label>
             <input type="text" id="editCentre" data-i18n-placeholder="prof_centre_placeholder" placeholder="e.g. Mandi Procurement Centre #2">
           </div>
@@ -118,6 +130,7 @@
     let farmer;
     try { farmer = JSON.parse(sessionStorage.getItem('farmer')); } catch (error) { farmer = null; }
     if (!farmer || !farmer.name || !farmer.mobileNumber) {
+    if (!farmer || !farmer.name || (!farmer.mobileNumber && !farmer.aadhaarNumber)) {
       location.replace(sessionStorage.getItem('admin') === 'true' ? 'admin-dashboard.html' : 'index.html');
     }
 
@@ -133,10 +146,18 @@
       location.href = 'index.html';
     });
 
+    function maskAadhaar(num) {
+      if (!num) return 'XXXX XXXX —';
+      const clean = String(num).replace(/\D/g, '');
+      if (clean.length < 4) return 'XXXX XXXX —';
+      return 'XXXX XXXX ' + clean.slice(-4);
+    }
+
     function renderProfile(f) {
       if (!f) return;
       name.textContent = f.name || 'Farmer';
       profileNameDisplay.textContent = f.name || '—';
+      aadhaarNumberDisplay.textContent = maskAadhaar(f.aadhaarNumber);
       mobileNumber.textContent = f.mobileNumber || '—';
       farmerIdDisplay.textContent = f.id ? `#FID-${f.id}` : '#FID-—';
       registeredCropsDisplay.textContent = f.registeredCrops || AgriQI18n.t('prof_not_provided');
@@ -144,6 +165,7 @@
       centreDisplay.textContent = f.procurementCentre || AgriQI18n.t('prof_not_assigned');
 
       editName.value = f.name || '';
+      editAadhaar.value = maskAadhaar(f.aadhaarNumber);
       editMobile.value = f.mobileNumber || '';
       editCrops.value = f.registeredCrops || '';
       editVillage.value = f.village || '';
@@ -174,6 +196,10 @@
     const editForm = document.getElementById('profileEditForm');
     const profileMessage = document.getElementById('profileMessage');
 
+    editMobile.addEventListener('input', () => {
+      editMobile.value = editMobile.value.replace(/\D/g, '').slice(0, 10);
+    });
+
     editBtn.addEventListener('click', () => {
       viewMode.hidden = true;
       editForm.hidden = false;
@@ -191,9 +217,18 @@
 
     editForm.addEventListener('submit', async e => {
       e.preventDefault();
+      const mobileVal = editMobile.value.trim();
+      if (!/^[0-9]{10}$/.test(mobileVal)) {
+        profileMessage.hidden = false;
+        profileMessage.textContent = AgriQI18n.t('reg_mobile_invalid');
+        profileMessage.style.color = '#c62828';
+        return;
+      }
+
       const updatedData = {
         name: editName.value.trim(),
         mobileNumber: editMobile.value.trim(),
+        mobileNumber: mobileVal,
         registeredCrops: editCrops.value.trim(),
         village: editVillage.value.trim(),
         procurementCentre: editCentre.value.trim()
