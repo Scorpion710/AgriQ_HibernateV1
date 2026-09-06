@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AgriQ | Farmer Registration</title>
+  <title>AgriQ | Consumer Registration</title>
   <link rel="stylesheet" href="css/auth.css">
+  <link rel="stylesheet" href="css/marketplace.css">
   <script src="js/i18n.js"></script>
 </head>
 <body>
   <header class="site-header" style="display: flex; align-items: center; justify-content: space-between; padding: 16px 24px;">
-    <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">A</span><span>AgriQ</span></a>
+    <a class="brand" href="consumer-login.html"><span class="brand-mark" aria-hidden="true">A</span><span>AgriQ</span></a>
     <div style="display: flex; align-items: center; gap: 10px;">
       <select class="lang-select" aria-label="Select Language">
         <option value="en">English</option>
@@ -18,47 +19,62 @@
       </select>
     </div>
   </header>
-  <main class="auth-card">
-    <p class="eyebrow" data-i18n="farmer_services_portal">Farmer services portal</p>
-    <h1 data-i18n="reg_title">Farmer Registration</h1>
-    <form id="register-form">
+
+  <main class="auth-card" style="width: min(480px, calc(100% - 36px)); margin: 32px auto;">
+    <p class="eyebrow" data-i18n="consumer_services_portal">Consumer / Buyer Portal</p>
+    <h1 data-i18n="consumer_reg_title">Consumer Registration</h1>
+    <p style="margin: 0 0 20px; color: var(--ink-muted); font-size: 0.88rem;" data-i18n="consumer_reg_subtext">Create your account to purchase produce directly from certified Indian farmers.</p>
+
+    <form id="consumer-register-form">
       <div class="form-group">
-        <label for="name" data-i18n="reg_name_label">Farmer Name</label>
+        <label for="name" data-i18n="reg_name_label">Full Name</label>
         <input id="name" data-i18n-placeholder="reg_name_placeholder" placeholder="Enter your full name" required autocomplete="name">
       </div>
-      <div class="form-group">
-        <label for="aadhaarNumber" data-i18n="reg_aadhaar_label">Aadhaar Number</label>
-        <input id="aadhaarNumber" type="text" inputmode="numeric" pattern="[0-9]{12}" maxlength="12" data-i18n-placeholder="reg_aadhaar_placeholder" placeholder="Enter 12-digit Aadhaar number" required autocomplete="off">
-      </div>
+
       <div class="form-group">
         <label for="mobileNumber" data-i18n="reg_mobile_label">Mobile Number</label>
         <input id="mobileNumber" type="tel" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" data-i18n-placeholder="reg_mobile_placeholder" placeholder="Enter 10-digit mobile number" required autocomplete="tel">
       </div>
+
       <div class="form-group">
         <label for="pin" data-i18n="login_pin_label">4-digit PIN</label>
         <input id="pin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="••••" required autocomplete="new-password">
       </div>
+
+      <div class="form-group">
+        <label for="address" data-i18n="consumer_reg_address_label">Delivery Address</label>
+        <input id="address" data-i18n-placeholder="consumer_reg_address_placeholder" placeholder="Enter house no, street, locality" autocomplete="street-address">
+      </div>
+
+      <div class="form-group">
+        <label for="city" data-i18n="consumer_reg_city_label">City / District</label>
+        <input id="city" data-i18n-placeholder="consumer_reg_city_placeholder" placeholder="e.g. Pune, Mumbai, Nashik" autocomplete="address-level2">
+      </div>
+
       <button type="submit" class="btn-primary" data-i18n="reg_btn">Register</button>
     </form>
+
     <p id="message" class="message" role="alert"></p>
+
     <div class="auth-links">
-      <p class="link"><a href="index.html" data-i18n="reg_back_login">Back to Login</a></p>
+      <p class="link"><span data-i18n="consumer_already_registered">Already have an account?</span> <a href="consumer-login.html" data-i18n="consumer_back_login">Back to Consumer Login</a></p>
       <div class="link-divider" data-i18n="login_or">or</div>
-      <p class="link">
-        <a href="consumer-register.html" style="font-weight: 700; color: var(--green-primary);" data-i18n="consumer_reg_title">Consumer Registration</a>
+      <p class="link link-admin">
+        <a href="register.html">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+          <span data-i18n="consumer_switch_farmer_reg">Farmer Registration</span>
+        </a>
       </p>
     </div>
   </main>
+
   <script>
-    const form = document.getElementById('register-form');
+    const form = document.getElementById('consumer-register-form');
     const message = document.getElementById('message');
-    const aadhaarInput = document.getElementById('aadhaarNumber');
     const mobileInput = document.getElementById('mobileNumber');
     const pinInput = document.getElementById('pin');
-
-    aadhaarInput.addEventListener('input', () => {
-      aadhaarInput.value = aadhaarInput.value.replace(/\D/g, '').slice(0, 12);
-    });
 
     mobileInput.addEventListener('input', () => {
       mobileInput.value = mobileInput.value.replace(/\D/g, '').slice(0, 10);
@@ -74,14 +90,11 @@
       message.className = 'message';
 
       const name = form.name.value.trim();
-      const aadhaarNumber = aadhaarInput.value.trim();
       const mobileNumber = mobileInput.value.trim();
       const pin = pinInput.value.trim();
+      const address = form.address.value.trim();
+      const city = form.city.value.trim();
 
-      if (!/^[0-9]{12}$/.test(aadhaarNumber)) {
-        message.textContent = AgriQI18n.t('reg_aadhaar_invalid');
-        return;
-      }
       if (!/^[0-9]{10}$/.test(mobileNumber)) {
         message.textContent = AgriQI18n.t('reg_mobile_invalid');
         return;
@@ -92,10 +105,10 @@
       }
 
       try {
-        const response = await fetch('/api/farmers/register', {
+        const response = await fetch('/api/consumers/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, aadhaarNumber, mobileNumber, pin })
+          body: JSON.stringify({ name, mobileNumber, pin, address, city })
         });
         const data = await response.json().catch(() => ({}));
         if (!response.ok) {
@@ -104,7 +117,7 @@
         }
         message.textContent = AgriQI18n.t('reg_success');
         message.classList.add('success');
-        setTimeout(() => { window.location.href = 'index.html'; }, 1200);
+        setTimeout(() => { window.location.href = 'consumer-login.html'; }, 1200);
       } catch (error) {
         message.textContent = AgriQI18n.t('reg_network_error');
       }

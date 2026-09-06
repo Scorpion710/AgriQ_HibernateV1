@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AgriQ | Procurement</title>
-  <link rel="stylesheet" href="css/payment.css">
+  <title>AgriQ | Procurement & Payments</title>
+  <link rel="stylesheet" href="css/dashboard.css">
   <link rel="stylesheet" href="css/navigation.css">
+  <link rel="stylesheet" href="css/payment.css">
+  <link rel="stylesheet" href="css/marketplace.css">
   <script src="js/msp.js"></script>
-  <script src="js/theme.js"></script>
   <script src="js/i18n.js"></script>
 </head>
 <body>
@@ -17,42 +18,74 @@
     <nav class="primary-nav" aria-label="Farmer navigation">
       <a href="dashboard.html" data-i18n="nav_dashboard">Dashboard</a>
       <a href="booking.html" data-i18n="nav_book_slot">Book Slot</a>
-      <a href="procurement.html" aria-current="page" data-i18n="nav_procurement">Procurement</a>
-      <a href="payment.html" data-i18n="nav_payment_status">Payment Status</a>
+      <a href="farmer-marketplace.html" data-i18n="nav_marketplace">Marketplace</a>
+      <a href="procurement.html" aria-current="page" data-i18n="nav_procurement_payments">Procurement & Payments</a>
       <a href="my-profile.html" data-i18n="nav_my_profile">My Profile</a>
       <select class="lang-select" aria-label="Select Language">
         <option value="en">English</option>
         <option value="hi">हिन्दी</option>
         <option value="mr">मराठी</option>
       </select>
-      <button id="logout" class="nav-logout" data-i18n="nav_logout">Logout</button>
     </nav>
   </header>
 
-  <main class="payment-page">
-    <section class="page-heading">
+  <main class="dashboard" style="max-width: 1140px; margin: 0 auto; padding: 36px 20px 64px;">
+    <section class="page-heading" style="margin-bottom: 24px;">
       <p class="eyebrow" data-i18n="farmer_services_portal">Farmer services portal</p>
-      <h1 data-i18n="proc_title">Digital procurement recording</h1>
-      <p data-i18n="proc_subtitle">Record crop procurement and view your previous records.</p>
+      <h1 data-i18n="proc_pay_title">Procurement & Payment Records</h1>
+      <p data-i18n="proc_pay_subtitle" style="color: #57705c; margin: 6px 0 0;">Manage crop procurement drop-offs and track direct DBT payment settlements in one place.</p>
     </section>
 
-    <section class="payment-layout">
-      <section class="card form-card" aria-labelledby="form-heading">
-        <h2 id="form-heading" data-i18n="proc_form_heading">Procurement details</h2>
+    <!-- Top Summary Stat Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 28px;">
+      <div class="dashboard-card" style="padding: 18px 20px;">
+        <p class="card-label">Total Procurements</p>
+        <h2 id="statTotalProcurements" style="font-size: 1.6rem; color: #176b3a; margin-top: 6px;">0</h2>
+        <span style="font-size: 0.8rem; color: #57705c;">Recorded harvest drop-offs</span>
+      </div>
+
+      <div class="dashboard-card" style="padding: 18px 20px;">
+        <p class="card-label">Total Produce Value</p>
+        <h2 id="statTotalValue" style="font-size: 1.6rem; color: #176b3a; margin-top: 6px;">₹0.00</h2>
+        <span style="font-size: 0.8rem; color: #57705c;">Government MSP value</span>
+      </div>
+
+      <div class="dashboard-card" style="padding: 18px 20px;">
+        <p class="card-label">Settled / Paid</p>
+        <h2 id="statSettledAmount" style="font-size: 1.6rem; color: #23633a; margin-top: 6px;">₹0.00</h2>
+        <span id="statPaidCount" style="font-size: 0.8rem; color: #57705c;">0 payments cleared</span>
+      </div>
+
+      <div class="dashboard-card" style="padding: 18px 20px;">
+        <p class="card-label">In Processing / Pending</p>
+        <h2 id="statPendingAmount" style="font-size: 1.6rem; color: #b45309; margin-top: 6px;">₹0.00</h2>
+        <span id="statPendingCount" style="font-size: 0.8rem; color: #57705c;">0 payments processing</span>
+      </div>
+    </div>
+
+    <!-- Main Grid: Form (Left) & Combined History Table (Right/Full) -->
+    <div style="display: grid; grid-template-columns: minmax(320px, 380px) minmax(0, 1fr); gap: 24px; align-items: start;">
+      <!-- Left Column: Record New Procurement -->
+      <section class="card form-card" style="padding: 24px; background: #fff; border: 1px solid #dce8d8; border-radius: 14px;" aria-labelledby="form-heading">
+        <div style="margin-bottom: 16px;">
+          <p class="eyebrow" data-i18n="farmer_services_portal">Government Mandi</p>
+          <h2 id="form-heading" style="font-size: 1.28rem; margin: 4px 0 0;" data-i18n="proc_form_heading">Procurement Details</h2>
+        </div>
+
         <form id="procurementForm">
           <label for="cropName" data-i18n="proc_crop_label">Crop Name</label>
           <select id="cropName" required>
             <option value="" data-i18n="proc_select_crop">Select a crop</option>
           </select>
 
-          <div class="form-row">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0;">
             <div>
               <label for="quantityKg" data-i18n="proc_quantity_label">Quantity (kg)</label>
-              <input id="quantityKg" type="number" min="0.01" step="0.01" placeholder="e.g. 100" required>
+              <input id="quantityKg" type="number" min="0.01" step="any" placeholder="e.g. 500" required style="width: 100%; padding: 9px 11px;">
             </div>
             <div>
               <label for="grade" data-i18n="proc_grade_label">Grade</label>
-              <select id="grade" required>
+              <select id="grade" required style="width: 100%; padding: 9px 11px;">
                 <option value="Grade A" selected data-i18n="proc_grade_a">Grade A (Premium)</option>
                 <option value="Grade B" data-i18n="proc_grade_b">Grade B (Standard FAQ)</option>
                 <option value="Grade C" data-i18n="proc_grade_c">Grade C (Commercial)</option>
@@ -61,64 +94,76 @@
           </div>
 
           <label for="mspPerKg" data-i18n="proc_msp_label">Government MSP per kg (₹)</label>
-          <input id="mspPerKg" type="text" readonly tabindex="-1" data-i18n-placeholder="proc_msp_placeholder" placeholder="Auto-loaded on crop & grade" aria-readonly="true">
+          <input id="mspPerKg" type="text" readonly tabindex="-1" data-i18n-placeholder="proc_msp_placeholder" placeholder="Auto-loaded on crop & grade" aria-readonly="true" style="background: #f4f8f1; cursor: default;">
 
-          <div class="location-card" aria-live="polite">
-            <span class="location-label" data-i18n="proc_total_label">Calculated total amount</span>
-            <strong id="totalAmount">₹0.00</strong>
+          <div class="location-card" aria-live="polite" style="margin: 14px 0; padding: 12px 14px; background: #eaf5e8; border-radius: 8px; border: 1px solid #dce8d8;">
+            <span class="location-label" data-i18n="proc_total_label" style="font-size: 0.74rem; font-weight: 700; color: #23633a; text-transform: uppercase;">Calculated total amount</span>
+            <strong id="totalAmount" style="display: block; font-size: 1.35rem; color: #176b3a; margin-top: 2px;">₹0.00</strong>
           </div>
 
           <label for="procurementDate" data-i18n="proc_date_label">Procurement Date</label>
-          <input id="procurementDate" type="date" required>
+          <input id="procurementDate" type="date" required style="margin-bottom: 16px;">
 
-          <button class="primary-button" type="submit" data-i18n="proc_submit_btn">Record Procurement</button>
+          <button class="primary-button" type="submit" style="width: 100%; justify-content: center; padding: 12px;" data-i18n="proc_submit_btn">Record Procurement</button>
         </form>
-        <p id="formMessage" class="form-message" role="alert" aria-live="polite"></p>
+        <p id="formMessage" class="action-message" role="alert" aria-live="polite" style="text-align: center; margin-top: 12px;" hidden></p>
       </section>
 
-      <section class="card records-card" aria-labelledby="records-heading">
-        <div class="section-title">
+      <!-- Right Column: Combined Procurement & Payment History -->
+      <section class="card" style="padding: 24px; background: #fff; border: 1px solid #dce8d8; border-radius: 14px;" aria-labelledby="history-heading">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
           <div>
             <p class="eyebrow" data-i18n="proc_records_eyebrow">Your records</p>
-            <h2 id="records-heading" data-i18n="proc_records_heading">Previous Procurements</h2>
+            <h2 id="history-heading" style="font-size: 1.32rem; margin: 4px 0 0;" data-i18n="proc_combined_records_heading">Procurement & Payment History</h2>
           </div>
-          <button id="refreshRecords" class="text-button" type="button" data-i18n="btn_refresh">Refresh</button>
+          <button id="refreshRecords" class="secondary-button" type="button" style="font-size: 0.84rem; padding: 8px 12px;" data-i18n="btn_refresh">Refresh</button>
         </div>
-        <div class="table-scroll">
-          <table>
+
+        <div class="table-scroll msp-table-wrapper" style="border: 1px solid #dce8d8; border-radius: 10px; overflow-x: auto;">
+          <table class="msp-table">
             <thead>
               <tr>
-                <th data-i18n="th_crop">Crop</th>
-                <th data-i18n="th_quantity">Quantity</th>
-                <th data-i18n="th_grade">Grade</th>
-                <th data-i18n="th_msp_kg">MSP/kg</th>
-                <th data-i18n="th_total">Total</th>
-                <th data-i18n="th_date">Date</th>
+                <th scope="col" data-i18n="th_procurement_id">Ref / ID</th>
+                <th scope="col" data-i18n="th_crop">Produce</th>
+                <th scope="col" data-i18n="th_grade">Grade</th>
+                <th scope="col" style="text-align: right;" data-i18n="th_quantity">Quantity</th>
+                <th scope="col" style="text-align: right;" data-i18n="th_msp_kg">MSP / kg</th>
+                <th scope="col" style="text-align: right;" data-i18n="th_total">Total Amount</th>
+                <th scope="col" data-i18n="th_date">Date</th>
+                <th scope="col" data-i18n="th_txn_ref">Transaction Ref</th>
+                <th scope="col" data-i18n="th_payment_status">Payment Status</th>
               </tr>
             </thead>
-            <tbody id="procurementRows">
-              <tr><td colspan="6" class="empty-state" data-i18n="proc_loading">Loading procurement records...</td></tr>
+            <tbody id="combinedRows">
+              <tr><td colspan="9" class="empty-state" data-i18n="proc_loading">Loading procurement & payment records...</td></tr>
             </tbody>
           </table>
         </div>
       </section>
-    </section>
+    </div>
   </main>
 
   <script>
     let farmer;
     try { farmer = JSON.parse(sessionStorage.getItem('farmer')); } catch (error) { farmer = null; }
     const farmerId = farmer && farmer.id;
-    if (!farmerId) window.location.replace(sessionStorage.getItem('admin') === 'true' ? 'admin-dashboard.html' : 'index.html');
+    if (!farmerId) {
+      window.location.replace(sessionStorage.getItem('admin') === 'true' ? 'admin-dashboard.html' : (sessionStorage.getItem('consumer') ? 'consumer-dashboard.html' : 'index.html'));
+    }
+
     document.querySelector('.nav-toggle').addEventListener('click', e => {
       const nav = document.querySelector('.primary-nav');
       nav.classList.toggle('is-open');
       e.currentTarget.setAttribute('aria-expanded', nav.classList.contains('is-open'));
     });
-    document.getElementById('logout').addEventListener('click', () => {
-      sessionStorage.removeItem('farmer');
-      window.location.href = 'index.html';
-    });
+
+    const logoutBtn = document.getElementById('logout');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        sessionStorage.removeItem('farmer');
+        window.location.href = 'index.html';
+      });
+    }
 
     const form = document.getElementById('procurementForm');
     const cropSelect = document.getElementById('cropName');
@@ -127,8 +172,17 @@
     const mspInput = document.getElementById('mspPerKg');
     const totalAmount = document.getElementById('totalAmount');
     const formMessage = document.getElementById('formMessage');
-    const rows = document.getElementById('procurementRows');
+    const combinedRows = document.getElementById('combinedRows');
+
+    const statTotalProcurements = document.getElementById('statTotalProcurements');
+    const statTotalValue = document.getElementById('statTotalValue');
+    const statSettledAmount = document.getElementById('statSettledAmount');
+    const statPaidCount = document.getElementById('statPaidCount');
+    const statPendingAmount = document.getElementById('statPendingAmount');
+    const statPendingCount = document.getElementById('statPendingCount');
+
     let cachedProcurements = [];
+    let cachedPayments = [];
 
     function populateCrops() {
       const currentVal = cropSelect.value;
@@ -155,11 +209,14 @@
         mspInput.value = `₹${msp.toFixed(2)}`;
         const total = quantity > 0 ? Number((quantity * msp).toFixed(2)) : 0;
         totalAmount.textContent = `₹${total.toFixed(2)}`;
-        AgriQMSP.save({ crop, grade, quantity, msp, totalAmount: total });
       } else {
         mspInput.value = '';
         totalAmount.textContent = '₹0.00';
       }
+    }
+
+    function formatCurrency(num) {
+      return '₹' + Number(num || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
     function formatDate(date) {
@@ -169,58 +226,105 @@
       return new Date(`${date}T00:00:00`).toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' });
     }
 
-    function addCell(row, value) {
-      const cell = document.createElement('td');
-      cell.textContent = value;
-      row.appendChild(cell);
+    function updateSummaryStats(procurements, payments) {
+      statTotalProcurements.textContent = procurements.length;
+      const totalVal = procurements.reduce((acc, p) => acc + (Number(p.totalAmount) || 0), 0);
+      statTotalValue.textContent = formatCurrency(totalVal);
+
+      let paidSum = 0, paidCount = 0, pendingSum = 0, pendingCount = 0;
+      payments.forEach(p => {
+        const st = (p.status || 'PENDING').toUpperCase();
+        const amt = Number(p.amount) || 0;
+        if (st === 'PAID') {
+          paidSum += amt;
+          paidCount++;
+        } else {
+          pendingSum += amt;
+          pendingCount++;
+        }
+      });
+
+      statSettledAmount.textContent = formatCurrency(paidSum);
+      statPaidCount.textContent = `${paidCount} payment(s) cleared`;
+      statPendingAmount.textContent = formatCurrency(pendingSum);
+      statPendingCount.textContent = `${pendingCount} payment(s) pending`;
     }
 
-    function procurementRow(procurement) {
-      const row = document.createElement('tr');
-      addCell(row, AgriQI18n.crop(procurement.cropName));
-      addCell(row, `${Number(procurement.quantityKg).toFixed(2)} kg`);
-      addCell(row, procurement.grade || 'Grade A');
-      addCell(row, `₹${Number(procurement.mspPerKg).toFixed(2)}`);
-      addCell(row, `₹${Number(procurement.totalAmount).toFixed(2)}`);
-      addCell(row, formatDate(procurement.procurementDate));
-      return row;
-    }
-
-    function renderProcurements(procurements) {
-      cachedProcurements = procurements || [];
-      rows.innerHTML = '';
-      if (!cachedProcurements.length) {
-        rows.innerHTML = `<tr><td colspan="6" class="empty-state">${AgriQI18n.t('proc_empty')}</td></tr>`;
+    function renderCombinedTable(procurements, payments) {
+      if (!procurements.length) {
+        combinedRows.innerHTML = `<tr><td colspan="9" class="empty-state">${AgriQI18n.t('proc_empty', 'No procurement records have been added.')}</td></tr>`;
         return;
       }
-      cachedProcurements.forEach((procurement) => rows.appendChild(procurementRow(procurement)));
+
+      // Map payments by procurementId or farmer sequence
+      const paymentMap = new Map();
+      payments.forEach(p => {
+        if (p.procurementId) paymentMap.set(p.procurementId, p);
+      });
+
+      combinedRows.innerHTML = procurements.map(p => {
+        // Find matching payment or fallback
+        const pay = paymentMap.get(p.id) || payments.find(payItem => Math.abs(Number(payItem.amount) - Number(p.totalAmount)) < 0.01 && payItem.paymentDate === p.procurementDate);
+        const payStatus = pay ? (pay.status || 'PROCESSING').toUpperCase() : 'PROCESSING';
+        const txnRef = pay && pay.transactionReference ? pay.transactionReference : `TXN-PRC-${p.id}`;
+
+        let statusClass = 'status-processing';
+        if (payStatus === 'PAID') statusClass = 'status-paid';
+        else if (payStatus === 'PENDING') statusClass = 'status-pending';
+
+        const localizedPayStatus = AgriQI18n.t('pay_opt_' + payStatus.toLowerCase(), payStatus);
+
+        return `
+          <tr>
+            <td style="font-weight: 700; white-space: nowrap;">#PRC-${p.id}</td>
+            <td class="crop-name-cell">${AgriQI18n.crop(p.cropName)}</td>
+            <td>${p.grade || 'Grade A'}</td>
+            <td class="price-kg-cell">${Number(p.quantityKg).toFixed(2).replace(/\.00$/, '')} kg</td>
+            <td class="price-kg-cell">${formatCurrency(p.mspPerKg)}</td>
+            <td class="price-quintal-cell">${formatCurrency(p.totalAmount)}</td>
+            <td style="white-space: nowrap;">${formatDate(p.procurementDate)}</td>
+            <td style="font-family: monospace; font-size: 0.85rem; color: #57705c;">${txnRef}</td>
+            <td><span class="badge-season ${statusClass}">${localizedPayStatus}</span></td>
+          </tr>
+        `;
+      }).join('');
     }
 
-    async function loadProcurements() {
+    async function loadAllRecords() {
       if (!farmerId) return;
-      rows.innerHTML = `<tr><td colspan="6" class="empty-state">${AgriQI18n.t('proc_loading')}</td></tr>`;
+      combinedRows.innerHTML = `<tr><td colspan="9" class="empty-state">${AgriQI18n.t('proc_loading')}</td></tr>`;
       try {
-        const response = await fetch(`/api/procurements/farmer/${farmerId}`);
-        if (!response.ok) throw new Error();
-        const procurements = await response.json();
-        renderProcurements(procurements);
+        const [procRes, payRes] = await Promise.all([
+          fetch(`/api/procurements/farmer/${farmerId}`),
+          fetch(`/api/payments/farmer/${farmerId}`)
+        ]);
+
+        cachedProcurements = procRes.ok ? await procRes.json() : [];
+        cachedPayments = payRes.ok ? await payRes.json() : [];
+
+        updateSummaryStats(cachedProcurements, cachedPayments);
+        renderCombinedTable(cachedProcurements, cachedPayments);
       } catch (error) {
-        rows.innerHTML = `<tr><td colspan="6" class="empty-state error-state">${AgriQI18n.t('proc_error')}</td></tr>`;
+        combinedRows.innerHTML = `<tr><td colspan="9" class="empty-state error-state">${AgriQI18n.t('proc_error')}</td></tr>`;
       }
     }
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
-      formMessage.textContent = '';
+      formMessage.hidden = true;
       const crop = cropSelect.value;
       const grade = gradeSelect.value || 'Grade A';
       const msp = AgriQMSP.get(crop, grade);
       if (msp === null) {
+        formMessage.hidden = false;
+        formMessage.style.color = '#c62828';
         formMessage.textContent = AgriQI18n.t('proc_msp_not_configured');
         return;
       }
       const quantity = Number(quantityInput.value);
       if (!quantity || quantity <= 0) {
+        formMessage.hidden = false;
+        formMessage.style.color = '#c62828';
         formMessage.textContent = AgriQI18n.t('proc_invalid_qty');
         return;
       }
@@ -234,6 +338,7 @@
         totalAmount: total,
         procurementDate: document.getElementById('procurementDate').value
       };
+
       try {
         const response = await fetch('/api/procurements', {
           method: 'POST',
@@ -241,14 +346,18 @@
           body: JSON.stringify(procurement)
         });
         if (!response.ok) throw new Error();
+        formMessage.hidden = false;
+        formMessage.style.color = '#23633a';
         formMessage.textContent = AgriQI18n.t('proc_success');
         AgriQMSP.save({ crop, grade, quantity, msp, totalAmount: total });
         form.reset();
         gradeSelect.value = 'Grade A';
         document.getElementById('procurementDate').value = new Date().toISOString().split('T')[0];
         updateTotal();
-        await loadProcurements();
+        await loadAllRecords();
       } catch (error) {
+        formMessage.hidden = false;
+        formMessage.style.color = '#c62828';
         formMessage.textContent = AgriQI18n.t('proc_error');
       }
     });
@@ -259,16 +368,16 @@
       quantityInput.addEventListener(evt, updateTotal);
     });
 
-    document.getElementById('refreshRecords').addEventListener('click', loadProcurements);
+    document.getElementById('refreshRecords').addEventListener('click', loadAllRecords);
 
     updateTotal();
-    loadProcurements();
+    loadAllRecords();
 
     // Re-render when language changes
     window.addEventListener('agriq-lang-change', () => {
       populateCrops();
       if (cachedProcurements.length) {
-        renderProcurements(cachedProcurements);
+        renderCombinedTable(cachedProcurements, cachedPayments);
       }
     });
   </script>

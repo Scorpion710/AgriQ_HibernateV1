@@ -44,11 +44,3 @@ select:focus, input:focus { outline: 3px solid #d6ead0; border-color: #2f7d45; }
 @media (max-width: 700px) { .site-header { padding: 0 20px; } .booking-page { width: min(100% - 32px, 520px); padding: 36px 0; } .booking-grid { grid-template-columns: 1fr; } }
 @media (max-width: 430px) { .site-header { min-height: 62px; } .card { padding: 22px; } .dashboard-link { font-size: .9rem; } }
 
-[data-theme="dark"] .booking-item { border-color: var(--line); }
-[data-theme="dark"] .booking-item strong { color: var(--ink); }
-[data-theme="dark"] .booking-item p { color: var(--muted); }
-[data-theme="dark"] .success-message { background: #123d21; color: #b9f7c7; }
-[data-theme="dark"] .location-card { background: #111; border-color: var(--green); }
-[data-theme="dark"] .location-card strong { color: var(--ink); }
-[data-theme="dark"] .text-button { color: var(--green-dark); }
-

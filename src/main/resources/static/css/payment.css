@@ -24,7 +24,6 @@ input, select { width: 100%; padding: 11px; border: 1px solid #b9cfba; border-ra
 input:focus, select:focus { outline: 3px solid #d6ead0; border-color: #2f7d45; }
 input[readonly] { background: #f7faf5; cursor: default; font-weight: 700; color: #173b27; }
 input[readonly]:focus { outline: none; border-color: #b9cfba; }
-[data-theme="dark"] input[readonly] { background: #121d15; color: #e8f2e8; }
 .location-card { margin-top: 18px; padding: 13px; border-left: 4px solid #6da84f; border-radius: 5px; background: #eff7eb; }
 .location-card strong { display: block; margin-top: 3px; font-size: 1.15rem; }
 .location-label { color: #4b7555; font-size: .8rem; font-weight: 700; text-transform: uppercase; }

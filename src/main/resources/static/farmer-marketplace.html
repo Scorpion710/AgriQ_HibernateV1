@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgriQ | Farmer Marketplace</title>
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/navigation.css">
+  <link rel="stylesheet" href="css/marketplace.css">
+  <script src="js/i18n.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="dashboard.html"><span class="brand-mark" aria-hidden="true">A</span><span>AgriQ</span></a>
+    <button class="nav-toggle" aria-expanded="false" data-i18n="nav_menu">Menu</button>
+    <nav class="primary-nav" aria-label="Farmer navigation">
+      <a href="dashboard.html" data-i18n="nav_dashboard">Dashboard</a>
+      <a href="booking.html" data-i18n="nav_book_slot">Book Slot</a>
+      <a href="farmer-marketplace.html" aria-current="page" data-i18n="nav_marketplace">Marketplace</a>
+      <a href="procurement.html" data-i18n="nav_procurement_payments">Procurement & Payments</a>
+      <a href="my-profile.html" data-i18n="nav_my_profile">My Profile</a>
+      <select class="lang-select" aria-label="Select Language">
+        <option value="en">English</option>
+        <option value="hi">हिन्दी</option>
+        <option value="mr">मराठी</option>
+      </select>
+    </nav>
+  </header>
+
+  <main class="dashboard" style="max-width: 1140px; margin: 0 auto; padding: 36px 20px 64px;">
+    <!-- Marketplace Header / Hero -->
+    <section class="welcome" style="margin-bottom: 24px;">
+      <div style="display: inline-flex; align-items: center; gap: 8px; background: #eaf5e8; color: #176b3a; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-bottom: 10px;">
+        <span style="width: 7px; height: 7px; border-radius: 50%; background: #2f7d45; display: inline-block;"></span>
+        <span data-i18n="farmer_services_portal">Farmer Services Portal</span>
+      </div>
+      <h1 data-i18n="fm_title" style="font-size: clamp(1.75rem, 3.5vw, 2.3rem); font-weight: 800; color: #142e1d; margin: 0 0 6px; letter-spacing: -0.02em;">Farmer Marketplace Management</h1>
+      <p data-i18n="fm_subtitle" style="color: #57705c; font-size: 0.95rem; margin: 0;">Create listings, upload crop images, and manage buyer orders directly.</p>
+    </section>
+
+    <!-- Marketplace Summary Stats Section -->
+    <div class="marketplace-stats-grid">
+      <div class="dashboard-card stat-summary-card">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <p class="card-label" style="font-size: 0.82rem; font-weight: 700; color: #4b7555; text-transform: uppercase; margin: 0;" data-i18n="stat_active_listings">Active Listings</p>
+          <div style="width: 38px; height: 38px; border-radius: 10px; background: #eaf5e8; color: #176b3a; display: grid; place-items: center; font-size: 1.15rem;" aria-hidden="true">&#127806;</div>
+        </div>
+        <h2 id="summaryActiveListings" style="font-size: 1.85rem; color: #176b3a; margin: 8px 0 2px; font-weight: 800;">0</h2>
+        <span style="font-size: 0.8rem; color: #57705c;" data-i18n="fm_summary_active_sub">Available on marketplace</span>
+      </div>
+
+      <div class="dashboard-card stat-summary-card">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <p class="card-label" style="font-size: 0.82rem; font-weight: 700; color: #4b7555; text-transform: uppercase; margin: 0;" data-i18n="stat_pending_orders">Pending Buyer Orders</p>
+          <div style="width: 38px; height: 38px; border-radius: 10px; background: #fef3c7; color: #b45309; display: grid; place-items: center; font-size: 1.15rem;" aria-hidden="true">&#128722;</div>
+        </div>
+        <h2 id="summaryPendingOrders" style="font-size: 1.85rem; color: #b45309; margin: 8px 0 2px; font-weight: 800;">0</h2>
+        <span style="font-size: 0.8rem; color: #57705c;" data-i18n="fm_summary_pending_sub">Awaiting your review</span>
+      </div>
+
+      <div class="dashboard-card stat-summary-card">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <p class="card-label" style="font-size: 0.82rem; font-weight: 700; color: #4b7555; text-transform: uppercase; margin: 0;" data-i18n="stat_total_listed_qty">Total Listed Quantity</p>
+          <div style="width: 38px; height: 38px; border-radius: 10px; background: #e0f2fe; color: #0369a1; display: grid; place-items: center; font-size: 1.15rem;" aria-hidden="true">&#9878;&#65039;</div>
+        </div>
+        <h2 id="summaryTotalQty" style="font-size: 1.85rem; color: #176b3a; margin: 8px 0 2px; font-weight: 800;">0 kg</h2>
+        <span style="font-size: 0.8rem; color: #57705c;" data-i18n="fm_summary_qty_sub">Across all listings</span>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="tab-navigation" role="tablist">
+      <button type="button" class="tab-btn active" id="tabBtnMyListings" role="tab" aria-selected="true" aria-controls="paneMyListings">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="3" width="7" height="7"></rect>
+          <rect x="14" y="3" width="7" height="7"></rect>
+          <rect x="14" y="14" width="7" height="7"></rect>
+          <rect x="3" y="14" width="7" height="7"></rect>
+        </svg>
+        <span data-i18n="fm_tab_my_listings">My Produce Listings</span>
+        <span id="myListingsCount" class="tab-badge" hidden>0</span>
+      </button>
+
+      <button type="button" class="tab-btn" id="tabBtnCreate" role="tab" aria-selected="false" aria-controls="paneCreate">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="16"></line>
+          <line x1="8" y1="12" x2="16" y2="12"></line>
+        </svg>
+        <span id="tabCreateLabel" data-i18n="fm_tab_create">Create New Listing</span>
+      </button>
+
+      <button type="button" class="tab-btn" id="tabBtnOrders" role="tab" aria-selected="false" aria-controls="paneOrders">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <path d="M16 10a4 4 0 0 1-8 0"></path>
+        </svg>
+        <span data-i18n="fm_tab_incoming_orders">Incoming Buyer Orders</span>
+        <span id="incomingOrdersCount" class="tab-badge" hidden>0</span>
+      </button>
+    </div>
+
+    <!-- TAB 1: MY LISTINGS -->
+    <section id="paneMyListings" class="tab-pane" role="tabpanel">
+      <div class="msp-section" style="padding: 24px; background: #fff; border: 1px solid #dce8d8; border-radius: 14px; box-shadow: 0 4px 14px rgb(23 59 39 / 5%);">
+        <div class="msp-section-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 20px;">
+          <div>
+            <p class="eyebrow" data-i18n="fm_tab_my_listings" style="margin: 0 0 4px;">My Produce Listings</p>
+            <h2 style="margin: 0; font-size: 1.35rem; color: #173b27;">Active & Previous Listings</h2>
+          </div>
+          <button type="button" id="addNewListingBtn" class="primary-button" style="font-size: 0.88rem; padding: 9px 18px; display: inline-flex; align-items: center; gap: 6px;">
+            <span style="font-size: 1.1rem; line-height: 1;">+</span> <span data-i18n="fm_tab_create">Create New Listing</span>
+          </button>
+        </div>
+
+        <div class="msp-table-wrapper" style="border: 1px solid #e2ece0; border-radius: 10px; overflow-x: auto;">
+          <table class="msp-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="background: #f4f8f1;">
+                <th scope="col" style="width: 60px;">Image</th>
+                <th scope="col" data-i18n="th_crop">Produce</th>
+                <th scope="col" data-i18n="th_grade">Variety</th>
+                <th scope="col" style="text-align: right;" data-i18n="th_quantity">Available</th>
+                <th scope="col" style="text-align: right;" data-i18n="th_msp_kg">Price / kg</th>
+                <th scope="col" data-i18n="prof_village">Location</th>
+                <th scope="col" data-i18n="th_status">Status</th>
+                <th scope="col" style="text-align: center; min-width: 140px;" data-i18n="th_action">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="farmerListingsTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: CREATE / EDIT LISTING -->
+    <section id="paneCreate" class="tab-pane" role="tabpanel" hidden>
+      <div class="listing-form-card" style="padding: 28px 32px; background: #fff; border: 1px solid #dce8d8; border-radius: 14px; box-shadow: 0 4px 16px rgb(23 59 39 / 6%); max-width: 840px; margin: 0 auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eef5ed; padding-bottom: 14px;">
+          <div>
+            <p class="eyebrow" data-i18n="fm_title" style="margin: 0 0 4px;">Farmer Marketplace</p>
+            <h2 id="formTitle" style="margin: 0; font-size: 1.35rem; color: #173b27;" data-i18n="fm_form_heading">New Produce Listing Details</h2>
+          </div>
+          <button type="button" id="cancelEditBtn" class="secondary-button" style="font-size: 0.85rem; padding: 7px 14px;" hidden data-i18n="btn_cancel">Cancel</button>
+        </div>
+
+        <form id="listingForm">
+          <input type="hidden" id="editingListingId">
+
+          <div class="listing-form-grid">
+            <div class="listing-field">
+              <label for="cropName" data-i18n="fm_crop_label">Crop / Product Name</label>
+              <input type="text" id="cropName" data-i18n-placeholder="fm_crop_placeholder" placeholder="e.g. Sharbati Wheat, Basmati Rice, Onion" required>
+            </div>
+
+            <div class="listing-field">
+              <label for="varietyGrade" data-i18n="fm_variety_label">Variety / Grade</label>
+              <input type="text" id="varietyGrade" data-i18n-placeholder="fm_variety_placeholder" placeholder="e.g. Grade A, Lokwan, 1121 Sella">
+            </div>
+
+            <div class="listing-field">
+              <label for="quantityKg" data-i18n="fm_qty_label">Quantity Available (kg)</label>
+              <input type="number" id="quantityKg" min="1" step="any" placeholder="e.g. 500" required>
+            </div>
+
+            <div class="listing-field">
+              <label for="pricePerKg" data-i18n="fm_price_label">Price per kg (₹)</label>
+              <input type="number" id="pricePerKg" min="1" step="any" placeholder="e.g. 35.50" required>
+            </div>
+
+            <div class="listing-field">
+              <label for="minOrderQuantityKg" data-i18n="fm_min_order_label">Min Order Quantity (kg)</label>
+              <input type="number" id="minOrderQuantityKg" min="1" step="any" placeholder="e.g. 10 (Optional)">
+            </div>
+
+            <div class="listing-field">
+              <label for="expectedAvailabilityDate" data-i18n="fm_date_label">Expected Availability Date</label>
+              <input type="date" id="expectedAvailabilityDate">
+            </div>
+
+            <div class="listing-field">
+              <label for="listingLocation" data-i18n="fm_loc_label">Location / Centre</label>
+              <input type="text" id="listingLocation" data-i18n-placeholder="fm_loc_placeholder" placeholder="e.g. Haveli, Pune Mandi Centre">
+            </div>
+
+            <div class="listing-field">
+              <label for="listingStatus" data-i18n="fm_status_label">Listing Status</label>
+              <select id="listingStatus">
+                <option value="AVAILABLE" data-i18n="status_available">Available</option>
+                <option value="SOLD" data-i18n="status_sold">Sold</option>
+                <option value="INACTIVE" data-i18n="status_inactive">Inactive</option>
+              </select>
+            </div>
+
+            <div class="listing-field full-width">
+              <label for="description" data-i18n="fm_desc_label">Product Description</label>
+              <textarea id="description" data-i18n-placeholder="fm_desc_placeholder" placeholder="Highlight harvest freshness, organic certification, storage condition..."></textarea>
+            </div>
+
+            <!-- Single Image Upload with Instant Preview -->
+            <div class="listing-field full-width">
+              <label data-i18n="fm_img_label">Crop / Product Image</label>
+              <div class="image-upload-wrap">
+                <div id="imagePreviewBox" class="image-preview-box">
+                  <span style="font-size: 2rem;">&#127806;</span>
+                </div>
+                <div class="image-upload-info">
+                  <p data-i18n="fm_img_hint" style="margin: 0 0 10px; font-size: 0.84rem; color: #57705c;">Upload a clear photo (JPG, PNG, WebP up to 5MB)</p>
+                  <label class="file-input-btn">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="17 8 12 3 7 8"></polyline>
+                      <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <span data-i18n="btn_upload_image">Upload Image</span>
+                    <input type="file" id="imageFileInput" accept="image/png, image/jpeg, image/webp" style="display: none;">
+                  </label>
+                  <input type="hidden" id="imageUrl">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 26px; display: flex; gap: 12px;">
+            <button type="submit" id="saveListingBtn" class="primary-button" style="flex: 1; padding: 12px 20px; font-size: 0.95rem; font-weight: 700;" data-i18n="fm_submit_btn">Publish Marketplace Listing</button>
+          </div>
+          <p id="listingFormMessage" class="action-message" role="alert" style="text-align: center; margin-top: 14px;" hidden></p>
+        </form>
+      </div>
+    </section>
+
+    <!-- TAB 3: INCOMING BUYER ORDERS -->
+    <section id="paneOrders" class="tab-pane" role="tabpanel" hidden>
+      <div class="msp-section" style="padding: 24px; background: #fff; border: 1px solid #dce8d8; border-radius: 14px; box-shadow: 0 4px 14px rgb(23 59 39 / 5%);">
+        <div class="msp-section-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 20px;">
+          <div>
+            <p class="eyebrow" data-i18n="fm_tab_incoming_orders" style="margin: 0 0 4px;">Incoming Buyer Orders</p>
+            <h2 style="margin: 0; font-size: 1.35rem; color: #173b27;">Requests from Consumers</h2>
+          </div>
+          <button type="button" id="refreshFarmerOrdersBtn" class="secondary-button" style="font-size: 0.85rem; padding: 7px 14px;" data-i18n="btn_refresh">Refresh</button>
+        </div>
+
+        <div class="msp-table-wrapper" style="border: 1px solid #e2ece0; border-radius: 10px; overflow-x: auto;">
+          <table class="msp-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="background: #f4f8f1;">
+                <th scope="col" data-i18n="th_order_id">Order ID</th>
+                <th scope="col" data-i18n="th_buyer">Consumer</th>
+                <th scope="col" data-i18n="prof_mobile">Contact</th>
+                <th scope="col" data-i18n="consumer_reg_address_label">Delivery Address</th>
+                <th scope="col" data-i18n="th_crop">Produce</th>
+                <th scope="col" style="text-align: right;" data-i18n="th_quantity">Qty</th>
+                <th scope="col" style="text-align: right;" data-i18n="th_total">Total Value</th>
+                <th scope="col" data-i18n="th_date">Date</th>
+                <th scope="col" data-i18n="th_status">Status</th>
+                <th scope="col" style="text-align: center; min-width: 130px;" data-i18n="th_action">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="farmerOrdersTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Farmer Auth Guard
+    let farmer;
+    try { farmer = JSON.parse(sessionStorage.getItem('farmer')); } catch (e) { farmer = null; }
+    if (!farmer || !farmer.id) {
+      window.location.replace(sessionStorage.getItem('admin') === 'true' ? 'admin-dashboard.html' : (sessionStorage.getItem('consumer') ? 'consumer-dashboard.html' : 'index.html'));
+    }
+
+    // Navigation toggle
+    document.querySelector('.nav-toggle').addEventListener('click', e => {
+      const nav = document.querySelector('.primary-nav');
+      nav.classList.toggle('is-open');
+      e.currentTarget.setAttribute('aria-expanded', nav.classList.contains('is-open'));
+    });
+
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        sessionStorage.removeItem('farmer');
+        window.location.href = 'index.html';
+      });
+    }
+
+    // Tab Handling
+    const tabBtnMyListings = document.getElementById('tabBtnMyListings');
+    const tabBtnCreate = document.getElementById('tabBtnCreate');
+    const tabBtnOrders = document.getElementById('tabBtnOrders');
+    const paneMyListings = document.getElementById('paneMyListings');
+    const paneCreate = document.getElementById('paneCreate');
+    const paneOrders = document.getElementById('paneOrders');
+
+    function switchTab(tabName) {
+      [tabBtnMyListings, tabBtnCreate, tabBtnOrders].forEach(b => b.classList.remove('active'));
+      [paneMyListings, paneCreate, paneOrders].forEach(p => p.hidden = true);
+
+      if (tabName === 'create') {
+        tabBtnCreate.classList.add('active');
+        paneCreate.hidden = false;
+      } else if (tabName === 'orders') {
+        tabBtnOrders.classList.add('active');
+        paneOrders.hidden = false;
+        loadFarmerOrders();
+      } else {
+        tabBtnMyListings.classList.add('active');
+        paneMyListings.hidden = false;
+        loadFarmerListings();
+      }
+    }
+
+    tabBtnMyListings.addEventListener('click', () => switchTab('myListings'));
+    tabBtnCreate.addEventListener('click', () => { resetListingForm(); switchTab('create'); });
+    tabBtnOrders.addEventListener('click', () => switchTab('orders'));
+    document.getElementById('addNewListingBtn').addEventListener('click', () => { resetListingForm(); switchTab('create'); });
+
+    // -------------------------------------------------------------
+    // FARMER LISTINGS MANAGEMENT & SUMMARY METRICS
+    // -------------------------------------------------------------
+    const farmerListingsTableBody = document.getElementById('farmerListingsTableBody');
+    const myListingsCount = document.getElementById('myListingsCount');
+    const summaryActiveListings = document.getElementById('summaryActiveListings');
+    const summaryPendingOrders = document.getElementById('summaryPendingOrders');
+    const summaryTotalQty = document.getElementById('summaryTotalQty');
+    let farmerListings = [];
+
+    function formatCurrency(num) {
+      return '₹' + Number(num || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function updateSummaryMetrics(listings, orders) {
+      if (listings) {
+        const activeCount = listings.filter(l => (l.status || 'AVAILABLE').toUpperCase() === 'AVAILABLE').length;
+        const totalQty = listings.reduce((sum, l) => sum + (Number(l.quantityKg) || 0), 0);
+        summaryActiveListings.textContent = activeCount;
+        summaryTotalQty.textContent = totalQty.toLocaleString('en-IN') + ' kg';
+      }
+      if (orders) {
+        const pendingCount = orders.filter(o => (o.orderStatus || 'PENDING').toUpperCase() === 'PENDING').length;
+        summaryPendingOrders.textContent = pendingCount;
+      }
+    }
+
+    async function loadFarmerListings() {
+      if (!farmer?.id) return;
+      farmerListingsTableBody.innerHTML = `<tr><td colspan="8" class="empty-search-state">${AgriQI18n.t('fm_loading_listings', 'Loading your listings...')}</td></tr>`;
+      try {
+        const res = await fetch(`/api/marketplace/farmer/${farmer.id}/listings`);
+        if (!res.ok) throw new Error();
+        farmerListings = await res.json();
+        renderFarmerListings(farmerListings);
+      } catch (err) {
+        farmerListingsTableBody.innerHTML = `<tr><td colspan="8" class="empty-search-state">Unable to load listings.</td></tr>`;
+      }
+    }
+
+    function renderFarmerListings(listings) {
+      updateSummaryMetrics(listings, null);
+
+      if (listings && listings.length > 0) {
+        myListingsCount.textContent = listings.length;
+        myListingsCount.hidden = false;
+      } else {
+        myListingsCount.hidden = true;
+      }
+
+      if (!listings || !listings.length) {
+        farmerListingsTableBody.innerHTML = `
+          <tr>
+            <td colspan="8" style="padding: 44px 20px; text-align: center;">
+              <div style="max-width: 440px; margin: 0 auto;">
+                <div style="width: 54px; height: 54px; border-radius: 12px; background: #eaf5e8; color: #176b3a; display: grid; place-items: center; font-size: 1.8rem; margin: 0 auto 12px;">&#127806;</div>
+                <h3 style="margin: 0 0 6px; font-size: 1.15rem; color: #173b27;" data-i18n="fm_empty_listings">You have not created any marketplace listings yet.</h3>
+                <p style="margin: 0 0 16px; font-size: 0.88rem; color: #57705c;">List your harvested crops to connect directly with verified consumers.</p>
+                <button type="button" class="primary-button create-first-listing-btn" style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.88rem; padding: 8px 16px;">
+                  <span>+</span> <span data-i18n="btn_create_first_listing">Create Your First Listing</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+        const firstBtn = farmerListingsTableBody.querySelector('.create-first-listing-btn');
+        if (firstBtn) {
+          firstBtn.addEventListener('click', () => { resetListingForm(); switchTab('create'); });
+        }
+        return;
+      }
+
+      farmerListingsTableBody.innerHTML = listings.map(l => {
+        const imgTag = l.imageUrl
+          ? `<div style="width: 46px; height: 46px; border-radius: 8px; overflow: hidden; border: 1px solid #dce8d8; background: #f4f8f1; display: grid; place-items: center; flex-shrink: 0;"><img src="${l.imageUrl}" alt="${l.cropName}" style="width: 100%; height: 100%; object-fit: cover;"></div>`
+          : `<div style="width: 46px; height: 46px; border-radius: 8px; background: #eaf5e8; color: #176b3a; border: 1px solid #dce8d8; display: grid; place-items: center; font-size: 1.4rem; flex-shrink: 0;">&#127806;</div>`;
+        const st = (l.status || 'AVAILABLE').toUpperCase();
+        let statusClass = 'status-available';
+        if (st === 'SOLD') statusClass = 'status-sold';
+        else if (st === 'INACTIVE') statusClass = 'status-inactive';
+
+        const localizedStatus = AgriQI18n.t('status_' + st.toLowerCase(), st);
+        const editBtnText = AgriQI18n.t('btn_edit_listing', 'Edit');
+        const deleteBtnText = AgriQI18n.t('btn_delete_listing', 'Delete');
+
+        return `
+          <tr style="border-bottom: 1px solid #edf4eb; transition: background 0.15s ease;">
+            <td style="padding: 12px 14px;">${imgTag}</td>
+            <td style="padding: 12px 14px;">
+              <strong style="color: #173b27; font-size: 0.96rem; display: block;">${l.cropName}</strong>
+            </td>
+            <td style="padding: 12px 14px;">
+              ${l.varietyGrade ? `<span class="product-variety-pill" style="margin: 0; display: inline-block;">${l.varietyGrade}</span>` : '<span style="color: #8c9e90;">—</span>'}
+            </td>
+            <td style="padding: 12px 14px; text-align: right;">
+              <strong style="color: #173b27; font-size: 0.95rem;">${Number(l.quantityKg).toLocaleString('en-IN')}</strong>
+              <span style="font-size: 0.8rem; color: #57705c;">kg</span>
+            </td>
+            <td style="padding: 12px 14px; text-align: right;">
+              <strong style="color: #176b3a; font-size: 0.98rem;">${formatCurrency(l.pricePerKg)}</strong>
+            </td>
+            <td style="padding: 12px 14px; color: #4b6653; font-size: 0.88rem;">
+              <span style="display: inline-flex; align-items: center; gap: 4px;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                ${l.location || 'Pune Mandi'}
+              </span>
+            </td>
+            <td style="padding: 12px 14px;"><span class="badge-status ${statusClass}">${localizedStatus}</span></td>
+            <td style="padding: 12px 14px; text-align: center; white-space: nowrap;">
+              <div style="display: inline-flex; gap: 6px;">
+                <button type="button" class="secondary-button edit-listing-btn" style="padding: 6px 10px; font-size: 0.8rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;" data-id="${l.id}">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                  ${editBtnText}
+                </button>
+                <button type="button" class="secondary-button delete-listing-btn" style="padding: 6px 8px; font-size: 0.8rem; font-weight: 600; color: #c62828; border-color: #f5c6cb; display: inline-flex; align-items: center; gap: 4px;" data-id="${l.id}">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                  ${deleteBtnText}
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      // Bind Edit & Delete handlers
+      document.querySelectorAll('.edit-listing-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = Number(btn.getAttribute('data-id'));
+          const found = farmerListings.find(item => item.id === id);
+          if (found) populateEditForm(found);
+        });
+      });
+
+      document.querySelectorAll('.delete-listing-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.getAttribute('data-id');
+          if (!confirm(AgriQI18n.t('fm_delete_confirm', 'Are you sure you want to delete this listing?'))) return;
+          try {
+            const res = await fetch(`/api/marketplace/listings/${id}?farmerId=${farmer.id}`, {
+              method: 'DELETE'
+            });
+            if (res.ok) {
+              loadFarmerListings();
+            }
+          } catch (e) {}
+        });
+      });
+    }
+
+    // -------------------------------------------------------------
+    // CREATE / EDIT LISTING FORM & IMAGE UPLOAD
+    // -------------------------------------------------------------
+    const listingForm = document.getElementById('listingForm');
+    const editingListingId = document.getElementById('editingListingId');
+    const cropNameInput = document.getElementById('cropName');
+    const varietyGradeInput = document.getElementById('varietyGrade');
+    const quantityKgInput = document.getElementById('quantityKg');
+    const pricePerKgInput = document.getElementById('pricePerKg');
+    const minOrderQuantityKgInput = document.getElementById('minOrderQuantityKg');
+    const expectedAvailabilityDateInput = document.getElementById('expectedAvailabilityDate');
+    const listingLocationInput = document.getElementById('listingLocation');
+    const listingStatusSelect = document.getElementById('listingStatus');
+    const descriptionInput = document.getElementById('description');
+    const imageUrlInput = document.getElementById('imageUrl');
+    const imagePreviewBox = document.getElementById('imagePreviewBox');
+    const imageFileInput = document.getElementById('imageFileInput');
+    const saveListingBtn = document.getElementById('saveListingBtn');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
+    const formTitle = document.getElementById('formTitle');
+    const listingFormMessage = document.getElementById('listingFormMessage');
+    const tabCreateLabel = document.getElementById('tabCreateLabel');
+
+    // Default location from profile
+    if (farmer.procurementCentre || farmer.village) {
+      listingLocationInput.value = farmer.procurementCentre || farmer.village;
+    }
+
+    // Handle Image Upload
+    imageFileInput.addEventListener('change', async e => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      if (!file.type.startsWith('image/')) {
+        alert('Please upload an image file (JPG, PNG, WebP).');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image size exceeds 5MB limit.');
+        return;
+      }
+
+      // Show immediate local preview
+      const reader = new FileReader();
+      reader.onload = event => {
+        imagePreviewBox.innerHTML = `<img src="${event.target.result}" alt="Preview" style="width:100%;height:100%;object-fit:cover;">`;
+        imageUrlInput.value = event.target.result;
+      };
+      reader.readAsDataURL(file);
+
+      // Upload to backend
+      const formData = new FormData();
+      formData.append('file', file);
+      try {
+        const res = await fetch('/api/marketplace/upload-image', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        if (data.imageUrl) {
+          imageUrlInput.value = data.imageUrl;
+          imagePreviewBox.innerHTML = `<img src="${data.imageUrl}" alt="Uploaded image" style="width:100%;height:100%;object-fit:cover;">`;
+        }
+      } catch (err) {}
+    });
+
+    function resetListingForm() {
+      editingListingId.value = '';
+      listingForm.reset();
+      imageUrlInput.value = '';
+      imagePreviewBox.innerHTML = `<span style="font-size: 2rem;">&#127806;</span>`;
+      listingLocationInput.value = farmer.procurementCentre || farmer.village || '';
+      listingStatusSelect.value = 'AVAILABLE';
+      formTitle.textContent = AgriQI18n.t('fm_form_heading', 'New Produce Listing Details');
+      tabCreateLabel.textContent = AgriQI18n.t('fm_tab_create', 'Create New Listing');
+      saveListingBtn.textContent = AgriQI18n.t('fm_submit_btn', 'Publish Marketplace Listing');
+      cancelEditBtn.hidden = true;
+      listingFormMessage.hidden = true;
+    }
+
+    function populateEditForm(l) {
+      editingListingId.value = l.id;
+      cropNameInput.value = l.cropName || '';
+      varietyGradeInput.value = l.varietyGrade || '';
+      quantityKgInput.value = l.quantityKg || '';
+      pricePerKgInput.value = l.pricePerKg || '';
+      minOrderQuantityKgInput.value = l.minOrderQuantityKg || '';
+      expectedAvailabilityDateInput.value = l.expectedAvailabilityDate || '';
+      listingLocationInput.value = l.location || '';
+      listingStatusSelect.value = l.status || 'AVAILABLE';
+      descriptionInput.value = l.description || '';
+      imageUrlInput.value = l.imageUrl || '';
+
+      if (l.imageUrl) {
+        imagePreviewBox.innerHTML = `<img src="${l.imageUrl}" alt="${l.cropName}" style="width:100%;height:100%;object-fit:cover;">`;
+      } else {
+        imagePreviewBox.innerHTML = `<span style="font-size: 2rem;">&#127806;</span>`;
+      }
+
+      formTitle.textContent = `Edit Listing: ${l.cropName}`;
+      tabCreateLabel.textContent = `Edit #${l.id}`;
+      saveListingBtn.textContent = AgriQI18n.t('fm_update_btn', 'Update Listing');
+      cancelEditBtn.hidden = false;
+      listingFormMessage.hidden = true;
+
+      switchTab('create');
+    }
+
+    cancelEditBtn.addEventListener('click', () => {
+      resetListingForm();
+      switchTab('myListings');
+    });
+
+    listingForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const isEdit = !!editingListingId.value;
+      const payload = {
+        farmerId: farmer.id,
+        farmerName: farmer.name,
+        farmerMobile: farmer.mobileNumber,
+        cropName: cropNameInput.value.trim(),
+        varietyGrade: varietyGradeInput.value.trim(),
+        quantityKg: Number(quantityKgInput.value),
+        pricePerKg: Number(pricePerKgInput.value),
+        minOrderQuantityKg: minOrderQuantityKgInput.value ? Number(minOrderQuantityKgInput.value) : null,
+        expectedAvailabilityDate: expectedAvailabilityDateInput.value,
+        location: listingLocationInput.value.trim(),
+        status: listingStatusSelect.value,
+        description: descriptionInput.value.trim(),
+        imageUrl: imageUrlInput.value.trim()
+      };
+
+      saveListingBtn.disabled = true;
+      listingFormMessage.hidden = false;
+      listingFormMessage.style.color = '#23633a';
+      listingFormMessage.textContent = 'Saving listing...';
+
+      try {
+        const url = isEdit
+          ? `/api/marketplace/listings/${editingListingId.value}?farmerId=${farmer.id}`
+          : '/api/marketplace/listings';
+        const method = isEdit ? 'PUT' : 'POST';
+
+        const res = await fetch(url, {
+          method: method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          listingFormMessage.style.color = '#c62828';
+          listingFormMessage.textContent = data.message || 'Failed to save listing.';
+          saveListingBtn.disabled = false;
+          return;
+        }
+
+        listingFormMessage.textContent = isEdit
+          ? AgriQI18n.t('fm_listing_updated', 'Listing updated successfully!')
+          : AgriQI18n.t('fm_listing_saved', 'Listing published successfully!');
+
+        setTimeout(() => {
+          resetListingForm();
+          switchTab('myListings');
+          saveListingBtn.disabled = false;
+        }, 900);
+      } catch (err) {
+        listingFormMessage.style.color = '#c62828';
+        listingFormMessage.textContent = AgriQI18n.t('reg_network_error', 'Unable to connect. Please try again.');
+        saveListingBtn.disabled = false;
+      }
+    });
+
+    // -------------------------------------------------------------
+    // INCOMING BUYER ORDERS TAB
+    // -------------------------------------------------------------
+    const farmerOrdersTableBody = document.getElementById('farmerOrdersTableBody');
+    const incomingOrdersCount = document.getElementById('incomingOrdersCount');
+    const refreshFarmerOrdersBtn = document.getElementById('refreshFarmerOrdersBtn');
+    let currentFarmerOrders = [];
+
+    async function loadFarmerOrders() {
+      if (!farmer?.id) return;
+      farmerOrdersTableBody.innerHTML = `<tr><td colspan="10" class="empty-search-state">${AgriQI18n.t('fm_loading_orders', 'Loading buyer orders...')}</td></tr>`;
+      try {
+        const res = await fetch(`/api/marketplace/orders/farmer/${farmer.id}`);
+        if (!res.ok) throw new Error();
+        currentFarmerOrders = await res.json();
+        renderFarmerOrders(currentFarmerOrders);
+      } catch (e) {
+        farmerOrdersTableBody.innerHTML = `<tr><td colspan="10" class="empty-search-state">Unable to load orders.</td></tr>`;
+      }
+    }
+
+    function renderFarmerOrders(orders) {
+      updateSummaryMetrics(null, orders);
+
+      if (orders && orders.length > 0) {
+        const pendingCount = orders.filter(o => (o.orderStatus || 'PENDING').toUpperCase() === 'PENDING').length;
+        incomingOrdersCount.textContent = pendingCount > 0 ? pendingCount : orders.length;
+        incomingOrdersCount.hidden = false;
+      } else {
+        incomingOrdersCount.hidden = true;
+      }
+
+      if (!orders || !orders.length) {
+        farmerOrdersTableBody.innerHTML = `
+          <tr>
+            <td colspan="10" style="padding: 44px 20px; text-align: center;">
+              <div style="max-width: 400px; margin: 0 auto;">
+                <div style="width: 54px; height: 54px; border-radius: 12px; background: #fef3c7; color: #b45309; display: grid; place-items: center; font-size: 1.8rem; margin: 0 auto 12px;">&#128722;</div>
+                <h3 style="margin: 0 0 6px; font-size: 1.15rem; color: #173b27;" data-i18n="fm_empty_orders">No buyer orders received yet.</h3>
+                <p style="margin: 0; font-size: 0.88rem; color: #57705c;">When consumers request to buy your listed produce, their orders will appear here for your confirmation.</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      farmerOrdersTableBody.innerHTML = orders.map(ord => {
+        const st = (ord.orderStatus || 'PENDING').toUpperCase();
+        let statusClass = 'status-pending';
+        if (st === 'ACCEPTED') statusClass = 'status-accepted';
+        else if (st === 'COMPLETED') statusClass = 'status-completed';
+        else if (st === 'CANCELLED') statusClass = 'status-cancelled';
+
+        const localizedStatus = AgriQI18n.t('status_' + st.toLowerCase(), st);
+        let actionButtons = '<span style="color: #8c9e90;">—</span>';
+
+        if (st === 'PENDING') {
+          actionButtons = `
+            <div style="display: inline-flex; gap: 6px;">
+              <button type="button" class="primary-button order-action-btn" style="padding: 5px 10px; font-size: 0.78rem; font-weight: 700;" data-id="${ord.id}" data-action="ACCEPTED">${AgriQI18n.t('btn_accept_order', 'Accept')}</button>
+              <button type="button" class="secondary-button order-action-btn" style="padding: 5px 8px; font-size: 0.78rem; font-weight: 600; color: #c62828; border-color: #f5c6cb;" data-id="${ord.id}" data-action="CANCELLED">${AgriQI18n.t('btn_cancel_order', 'Reject')}</button>
+            </div>
+          `;
+        } else if (st === 'ACCEPTED') {
+          actionButtons = `
+            <button type="button" class="primary-button order-action-btn" style="padding: 5px 12px; font-size: 0.78rem; font-weight: 700; background: #155724;" data-id="${ord.id}" data-action="COMPLETED">${AgriQI18n.t('btn_complete_order', 'Complete')}</button>
+          `;
+        }
+
+        return `
+          <tr style="border-bottom: 1px solid #edf4eb; transition: background 0.15s ease;">
+            <td style="padding: 12px 14px; font-weight: 700; color: #176b3a;">#ORD-${ord.id}</td>
+            <td style="padding: 12px 14px;"><strong style="color: #173b27;">${ord.consumerName || 'Consumer'}</strong></td>
+            <td style="padding: 12px 14px; color: #4b6653; font-size: 0.88rem;">${ord.consumerMobile || '—'}</td>
+            <td style="padding: 12px 14px; max-width: 190px; word-break: break-word; font-size: 0.86rem; color: #4b6653;">${ord.deliveryAddress || '—'}</td>
+            <td style="padding: 12px 14px;"><strong style="color: #173b27;">${ord.cropName}</strong></td>
+            <td style="padding: 12px 14px; text-align: right;"><strong style="color: #173b27;">${Number(ord.quantityKg).toLocaleString('en-IN')}</strong> <span style="font-size: 0.8rem; color: #57705c;">kg</span></td>
+            <td style="padding: 12px 14px; text-align: right;"><strong style="color: #176b3a; font-size: 0.96rem;">${formatCurrency(ord.totalAmount)}</strong></td>
+            <td style="padding: 12px 14px; color: #57705c; font-size: 0.86rem; white-space: nowrap;">${ord.orderDate || '—'}</td>
+            <td style="padding: 12px 14px;"><span class="badge-status ${statusClass}">${localizedStatus}</span></td>
+            <td style="padding: 12px 14px; text-align: center; white-space: nowrap;">${actionButtons}</td>
+          </tr>
+        `;
+      }).join('');
+
+      // Bind action buttons
+      document.querySelectorAll('.order-action-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const orderId = btn.getAttribute('data-id');
+          const targetStatus = btn.getAttribute('data-action');
+          try {
+            const res = await fetch(`/api/marketplace/orders/${orderId}/status`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ status: targetStatus })
+            });
+            if (res.ok) {
+              loadFarmerOrders();
+              loadFarmerListings();
+            }
+          } catch (e) {}
+        });
+      });
+    }
+
+    refreshFarmerOrdersBtn.addEventListener('click', loadFarmerOrders);
+
+    // Initial Load
+    loadFarmerListings();
+    loadFarmerOrders();
+
+    // Re-render on language change
+    window.addEventListener('agriq-lang-change', () => {
+      renderFarmerListings(farmerListings);
+      if (currentFarmerOrders.length) {
+        renderFarmerOrders(currentFarmerOrders);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -6,7 +6,6 @@
   <title>AgriQ | Book Slot</title>
   <link rel="stylesheet" href="css/booking.css">
   <link rel="stylesheet" href="css/navigation.css">
-  <script src="js/theme.js"></script>
   <script src="js/i18n.js"></script>
 </head>
 <body>
@@ -16,15 +15,14 @@
     <nav class="primary-nav" aria-label="Farmer navigation">
       <a href="dashboard.html" data-i18n="nav_dashboard">Dashboard</a>
       <a href="booking.html" aria-current="page" data-i18n="nav_book_slot">Book Slot</a>
-      <a href="procurement.html" data-i18n="nav_procurement">Procurement</a>
-      <a href="payment.html" data-i18n="nav_payment_status">Payment Status</a>
+      <a href="farmer-marketplace.html" data-i18n="nav_marketplace">Marketplace</a>
+      <a href="procurement.html" data-i18n="nav_procurement_payments">Procurement & Payments</a>
       <a href="my-profile.html" data-i18n="nav_my_profile">My Profile</a>
       <select class="lang-select" aria-label="Select Language">
         <option value="en">English</option>
         <option value="hi">हिन्दी</option>
         <option value="mr">मराठी</option>
       </select>
-      <button id="logout" class="nav-logout" data-i18n="nav_logout">Logout</button>
     </nav>
   </header>
 
@@ -95,7 +93,7 @@
     try { farmer = JSON.parse(sessionStorage.getItem('farmer')); } catch (error) { farmer = null; }
     const farmerId = farmer && farmer.id;
     if (!farmerId) {
-      window.location.replace(sessionStorage.getItem('admin') === 'true' ? 'admin-dashboard.html' : 'index.html');
+      window.location.replace(sessionStorage.getItem('admin') === 'true' ? 'admin-dashboard.html' : (sessionStorage.getItem('consumer') ? 'consumer-dashboard.html' : 'index.html'));
     }
 
     document.querySelector('.nav-toggle').addEventListener('click', e => {
@@ -104,10 +102,13 @@
       e.currentTarget.setAttribute('aria-expanded', nav.classList.contains('is-open'));
     });
 
-    document.getElementById('logout').addEventListener('click', () => {
-      sessionStorage.removeItem('farmer');
-      window.location.href = 'index.html';
-    });
+    const logoutBtn = document.getElementById('logout');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        sessionStorage.removeItem('farmer');
+        window.location.href = 'index.html';
+      });
+    }
 
     const centreSelect = document.getElementById('centreId');
     const locationCard = document.getElementById('locationCard');

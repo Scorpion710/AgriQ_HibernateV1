@@ -6,9 +6,9 @@
   <title>AgriQ | Farmer Dashboard</title>
   <link rel="stylesheet" href="css/dashboard.css">
   <link rel="stylesheet" href="css/navigation.css">
-  <script src="js/theme.js"></script>
-  <script src="js/i18n.js"></script>
+  <link rel="stylesheet" href="css/marketplace.css">
   <script src="js/msp.js"></script>
+  <script src="js/i18n.js"></script>
 </head>
 <body>
   <header class="site-header">
@@ -17,15 +17,14 @@
     <nav class="primary-nav" aria-label="Farmer navigation">
       <a href="dashboard.html" aria-current="page" data-i18n="nav_dashboard">Dashboard</a>
       <a href="booking.html" data-i18n="nav_book_slot">Book Slot</a>
-      <a href="procurement.html" data-i18n="nav_procurement">Procurement</a>
-      <a href="payment.html" data-i18n="nav_payment_status">Payment Status</a>
+      <a href="farmer-marketplace.html" data-i18n="nav_marketplace">Marketplace</a>
+      <a href="procurement.html" data-i18n="nav_procurement_payments">Procurement & Payments</a>
       <a href="my-profile.html" data-i18n="nav_my_profile">My Profile</a>
       <select class="lang-select" aria-label="Select Language">
         <option value="en">English</option>
         <option value="hi">हिन्दी</option>
         <option value="mr">मराठी</option>
       </select>
-      <button id="logout" class="nav-logout" data-i18n="nav_logout">Logout</button>
     </nav>
   </header>
 
@@ -37,6 +36,45 @@
     </section>
 
     <div class="dashboard-grid">
+      <!-- Farmer Choice Section: Government Procurement vs Marketplace Selling -->
+      <section class="farmer-choice-section" aria-labelledby="farmer-choice-title">
+        <div class="farmer-choice-header">
+          <p class="eyebrow" data-i18n="farmer_choice_eyebrow">Choose Your Pathway</p>
+          <h2 id="farmer-choice-title" data-i18n="farmer_choice_heading">Procurement or Direct Selling</h2>
+          <p class="section-subtitle" data-i18n="farmer_choice_sub">Access official government procurement centres with MSP or sell directly to consumers at your own rates.</p>
+        </div>
+
+        <div class="farmer-choice-grid">
+          <!-- Choice A: Government Procurement -->
+          <article class="choice-card procure-card">
+            <div>
+              <div class="choice-card-top">
+                <div class="choice-icon" aria-hidden="true">&#127963;</div>
+                <div>
+                  <h3 data-i18n="choice_procure_title">Government Procurement</h3>
+                  <p data-i18n="choice_procure_desc">Book mandi drop-off slots, generate digital queue tokens, and secure guaranteed official Minimum Support Prices (MSP).</p>
+                </div>
+              </div>
+            </div>
+            <a href="booking.html" class="primary-button" data-i18n="choice_procure_btn">Book Procurement Slot</a>
+          </article>
+
+          <!-- Choice B: Sell on AgriQ Marketplace -->
+          <article class="choice-card market-card">
+            <div>
+              <div class="choice-card-top">
+                <div class="choice-icon" aria-hidden="true">&#128722;</div>
+                <div>
+                  <h3 data-i18n="choice_market_title">Sell on AgriQ Marketplace</h3>
+                  <p data-i18n="choice_market_desc">List your harvested produce directly for consumers, set your own competitive prices, and manage incoming buyer requests.</p>
+                </div>
+              </div>
+            </div>
+            <a href="farmer-marketplace.html" class="primary-button" style="background: #256f3e; border-color: #256f3e;" data-i18n="choice_market_btn">Sell on Marketplace</a>
+          </article>
+        </div>
+      </section>
+
       <!-- Today's Queue Card -->
       <article class="dashboard-card queue-card">
         <div>
@@ -126,7 +164,7 @@
     let farmer;
     try { farmer = JSON.parse(sessionStorage.getItem('farmer')); } catch (error) { farmer = null; }
     if (!farmer || !farmer.name || (!farmer.mobileNumber && !farmer.aadhaarNumber)) {
-      location.replace(sessionStorage.getItem('admin') === 'true' ? 'admin-dashboard.html' : 'index.html');
+      location.replace(sessionStorage.getItem('admin') === 'true' ? 'admin-dashboard.html' : (sessionStorage.getItem('consumer') ? 'consumer-dashboard.html' : 'index.html'));
     } else {
       welcomeName.textContent = farmer.name;
     }
@@ -138,10 +176,13 @@
       e.currentTarget.setAttribute('aria-expanded', nav.classList.contains('is-open'));
     });
 
-    document.getElementById('logout').addEventListener('click', () => {
-      sessionStorage.removeItem('farmer');
-      location.href = 'index.html';
-    });
+    const logoutBtn = document.getElementById('logout');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        sessionStorage.removeItem('farmer');
+        location.href = 'index.html';
+      });
+    }
 
     // -------------------------------------------------------------
     // 1. Queue Status

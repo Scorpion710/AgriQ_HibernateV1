@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgriQ | Consumer Portal</title>
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/navigation.css">
+  <link rel="stylesheet" href="css/marketplace.css">
+  <script src="js/i18n.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="consumer-dashboard.html"><span class="brand-mark" aria-hidden="true">A</span><span>AgriQ</span></a>
+    <button class="nav-toggle" aria-expanded="false" data-i18n="nav_menu">Menu</button>
+    <nav class="primary-nav" aria-label="Consumer navigation">
+      <a href="#marketplace" id="navMarketplace" class="active-nav-link" data-i18n="nav_marketplace">Marketplace</a>
+      <a href="#orders" id="navOrders" data-i18n="nav_my_orders">My Orders</a>
+      <a href="#profile" id="navProfile" data-i18n="nav_my_profile">My Profile</a>
+      <select class="lang-select" aria-label="Select Language">
+        <option value="en">English</option>
+        <option value="hi">हिन्दी</option>
+        <option value="mr">मराठी</option>
+      </select>
+      <button id="logoutBtn" class="nav-logout" data-i18n="nav_logout">Logout</button>
+    </nav>
+  </header>
+
+  <main class="dashboard">
+    <!-- Welcome Header -->
+    <section class="welcome">
+      <p class="eyebrow" data-i18n="consumer_portal_badge">Consumer Marketplace</p>
+      <h1><span data-i18n="cm_welcome_greeting">Hello,</span> <span id="consumerWelcomeName">Buyer</span>.</h1>
+      <p data-i18n="cm_welcome_sub">Browse fresh farm produce directly from verified farmers and manage your orders.</p>
+    </section>
+
+    <!-- Tab navigation -->
+    <div class="tab-navigation" role="tablist">
+      <button type="button" class="tab-btn active" id="tabBtnBrowse" role="tab" aria-selected="true" aria-controls="paneBrowse">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="20" cy="21" r="1"></circle>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg>
+        <span data-i18n="cm_tab_browse">Browse Marketplace</span>
+      </button>
+
+      <button type="button" class="tab-btn" id="tabBtnOrders" role="tab" aria-selected="false" aria-controls="paneOrders">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        <span data-i18n="cm_tab_orders">My Orders / Purchases</span>
+        <span id="ordersCountBadge" class="tab-badge" hidden>0</span>
+      </button>
+
+      <button type="button" class="tab-btn" id="tabBtnProfile" role="tab" aria-selected="false" aria-controls="paneProfile">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        <span data-i18n="cm_tab_profile">My Profile</span>
+      </button>
+    </div>
+
+    <!-- TAB 1: BROWSE MARKETPLACE -->
+    <section id="paneBrowse" class="tab-pane" role="tabpanel">
+      <!-- Search & Filters Toolbar -->
+      <div class="marketplace-toolbar">
+        <div class="search-field-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="marketSearch" data-i18n-placeholder="cm_search_placeholder" placeholder="Search produce (e.g. Wheat, Rice, Tomato, Onion)..." aria-label="Search produce">
+        </div>
+
+        <div class="filter-select-wrap">
+          <select id="locationFilter" aria-label="Filter by Location">
+            <option value="" data-i18n="cm_filter_location">All Locations</option>
+          </select>
+        </div>
+
+        <div class="filter-select-wrap">
+          <input type="number" id="maxPriceFilter" min="1" step="1" data-i18n-placeholder="cm_filter_price" placeholder="Max Price (₹/kg)" aria-label="Maximum Price">
+        </div>
+
+        <div class="filter-select-wrap">
+          <input type="number" id="minQtyFilter" min="1" step="1" data-i18n-placeholder="cm_filter_qty" placeholder="Min Stock (kg)" aria-label="Minimum Stock">
+        </div>
+
+        <button type="button" id="resetFiltersBtn" class="secondary-button" style="padding: 10px 14px; font-size: 0.85rem;" data-i18n="btn_refresh">Refresh</button>
+      </div>
+
+      <!-- Live Count Badge -->
+      <div style="margin-bottom: 16px; font-size: 0.88rem; font-weight: 700; color: #4b7555;" id="listingsCountDisplay">
+        Loading produce listings...
+      </div>
+
+      <!-- Products Grid -->
+      <div id="productsGrid" class="products-grid" aria-live="polite">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- TAB 2: MY ORDERS / PURCHASES -->
+    <section id="paneOrders" class="tab-pane" role="tabpanel" hidden>
+      <div class="msp-section" style="padding: 24px;">
+        <div class="msp-section-header" style="display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <p class="eyebrow" data-i18n="cm_tab_orders">My Orders / Purchases</p>
+            <h2 data-i18n="cm_tab_orders">My Purchases</h2>
+          </div>
+          <button id="refreshOrdersBtn" class="secondary-button" style="font-size: 0.82rem;" data-i18n="btn_refresh">Refresh</button>
+        </div>
+
+        <div class="msp-table-wrapper">
+          <table class="msp-table">
+            <thead>
+              <tr>
+                <th scope="col" data-i18n="th_order_id">Order ID</th>
+                <th scope="col" data-i18n="th_crop">Produce</th>
+                <th scope="col" style="text-align: right;" data-i18n="th_quantity">Quantity</th>
+                <th scope="col" style="text-align: right;" data-i18n="th_msp_kg">Price / kg</th>
+                <th scope="col" style="text-align: right;" data-i18n="th_total">Total Value</th>
+                <th scope="col" data-i18n="th_seller">Farmer</th>
+                <th scope="col" data-i18n="th_date">Date</th>
+                <th scope="col" data-i18n="th_status">Status</th>
+                <th scope="col" style="text-align: center;" data-i18n="th_action">Action</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: MY PROFILE -->
+    <section id="paneProfile" class="tab-pane" role="tabpanel" hidden>
+      <article class="dashboard-card profile-card" style="max-width: 720px; margin: 0 auto; padding: 32px;">
+        <div class="profile-header-row">
+          <div class="profile-title-wrap">
+            <div class="card-icon" aria-hidden="true">&#128100;</div>
+            <div>
+              <p class="card-label" data-i18n="consumer_portal_badge">Consumer Marketplace</p>
+              <h2 id="profileConsumerNameDisplay">Consumer Name</h2>
+            </div>
+          </div>
+          <button type="button" id="editConsumerProfileBtn" class="edit-profile-btn" aria-label="Edit Profile">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+            <span data-i18n="prof_edit_btn">Edit Profile</span>
+          </button>
+        </div>
+
+        <!-- View Mode -->
+        <div id="consumerProfileView" class="profile-details-grid" style="margin-top: 18px; gap: 14px;">
+          <div class="profile-item" style="padding: 14px 16px;">
+            <span class="profile-item-label">Consumer ID</span>
+            <strong id="cIdDisplay">#CID-—</strong>
+          </div>
+          <div class="profile-item" style="padding: 14px 16px;">
+            <span class="profile-item-label" data-i18n="prof_full_name">Full Name</span>
+            <strong id="cNameDisplay">—</strong>
+          </div>
+          <div class="profile-item" style="padding: 14px 16px;">
+            <span class="profile-item-label" data-i18n="prof_mobile">Mobile Number</span>
+            <strong id="cMobileDisplay">—</strong>
+          </div>
+          <div class="profile-item" style="padding: 14px 16px;">
+            <span class="profile-item-label" data-i18n="consumer_reg_city_label">City / District</span>
+            <strong id="cCityDisplay">Not provided</strong>
+          </div>
+          <div class="profile-item" style="padding: 14px 16px; grid-column: 1 / -1;">
+            <span class="profile-item-label" data-i18n="consumer_reg_address_label">Delivery Address</span>
+            <strong id="cAddressDisplay">Not provided</strong>
+          </div>
+        </div>
+
+        <!-- Edit Form -->
+        <form id="consumerProfileEditForm" class="profile-edit-form" style="margin-top: 18px;" hidden>
+          <div class="edit-form-grid" style="gap: 14px;">
+            <div class="edit-form-field">
+              <label for="editCName" data-i18n="prof_full_name">Full Name</label>
+              <input type="text" id="editCName" required>
+            </div>
+            <div class="edit-form-field">
+              <label for="editCMobile" data-i18n="prof_mobile">Mobile Number</label>
+              <input type="text" id="editCMobile" readonly disabled style="cursor: not-allowed; opacity: 0.75;">
+            </div>
+            <div class="edit-form-field">
+              <label for="editCCity" data-i18n="consumer_reg_city_label">City / District</label>
+              <input type="text" id="editCCity" data-i18n-placeholder="consumer_reg_city_placeholder" placeholder="e.g. Pune, Mumbai">
+            </div>
+            <div class="edit-form-field" style="grid-column: 1 / -1;">
+              <label for="editCAddress" data-i18n="consumer_reg_address_label">Delivery Address</label>
+              <input type="text" id="editCAddress" data-i18n-placeholder="consumer_reg_address_placeholder" placeholder="Enter house no, street, locality">
+            </div>
+          </div>
+          <div class="profile-action-buttons" style="margin-top: 14px;">
+            <button type="submit" class="primary-button" data-i18n="btn_save">Save Changes</button>
+            <button type="button" id="cancelConsumerProfileBtn" class="secondary-button" data-i18n="btn_cancel">Cancel</button>
+          </div>
+          <p id="consumerProfileMsg" class="action-message" role="alert" style="margin: 10px 0 0;" hidden></p>
+        </form>
+      </article>
+    </section>
+  </main>
+
+  <!-- Product Purchase Request Modal -->
+  <div id="purchaseModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalCropTitle">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2 id="modalCropTitle" data-i18n="cm_order_modal_heading">Produce Purchase Request</h2>
+        <button type="button" id="closeModalBtn" class="modal-close-btn" aria-label="Close modal">&times;</button>
+      </div>
+
+      <div style="display: flex; gap: 14px; align-items: center; margin-bottom: 16px;">
+        <div id="modalCropImgWrap" class="image-preview-box" style="width: 72px; height: 72px; border-radius: 10px;">
+          <!-- image / fallback -->
+        </div>
+        <div>
+          <span id="modalVarietyBadge" class="product-variety-pill">Grade A</span>
+          <h3 id="modalCropName" style="margin: 4px 0 2px; font-size: 1.2rem; color: var(--ink);">Crop</h3>
+          <p id="modalFarmerLocation" style="margin: 0; font-size: 0.82rem; color: var(--muted);">Farmer Name &bull; Location</p>
+        </div>
+      </div>
+
+      <p id="modalDescription" style="font-size: 0.86rem; color: var(--muted); margin: 0 0 16px; line-height: 1.45;"></p>
+
+      <form id="purchaseOrderForm">
+        <input type="hidden" id="modalListingId">
+
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label for="orderQuantityInput" data-i18n="cm_order_enter_qty">Order Quantity (kg)</label>
+          <input type="number" id="orderQuantityInput" min="1" step="any" required style="font-size: 1.1rem; font-weight: 700;">
+          <small id="modalStockHelper" style="display: block; font-size: 0.78rem; color: var(--muted); margin-top: 4px;"></small>
+        </div>
+
+        <!-- Calculation Summary Box -->
+        <div class="order-calc-card">
+          <div class="order-calc-row">
+            <span data-i18n="cm_order_rate">Farmer Rate</span>
+            <strong id="modalRateDisplay">₹0.00 / kg</strong>
+          </div>
+          <div class="order-calc-row">
+            <span data-i18n="th_quantity">Quantity</span>
+            <strong id="modalQtyDisplay">0 kg</strong>
+          </div>
+          <div class="order-calc-row total-row">
+            <span data-i18n="cm_order_calc_total">Total Estimated Value</span>
+            <strong id="modalTotalDisplay">₹0.00</strong>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 18px;">
+          <label for="orderDeliveryAddress" data-i18n="cm_order_address_label">Delivery / Contact Address</label>
+          <input type="text" id="orderDeliveryAddress" required data-i18n-placeholder="consumer_reg_address_placeholder" placeholder="Enter delivery address">
+        </div>
+
+        <button type="submit" id="submitOrderBtn" class="btn-primary" data-i18n="cm_order_submit_btn">Confirm & Place Request</button>
+      </form>
+      <p id="modalOrderMessage" class="action-message" role="alert" style="text-align: center; margin-top: 14px;" hidden></p>
+    </div>
+  </div>
+
+  <script>
+    // Check consumer authentication
+    let consumer;
+    try { consumer = JSON.parse(sessionStorage.getItem('consumer')); } catch (e) { consumer = null; }
+    if (!consumer || !consumer.id) {
+      window.location.replace('consumer-login.html');
+    }
+
+    const welcomeName = document.getElementById('consumerWelcomeName');
+    if (welcomeName && consumer.name) {
+      welcomeName.textContent = consumer.name;
+    }
+
+    // Navigation toggle & Logout
+    document.querySelector('.nav-toggle').addEventListener('click', e => {
+      const nav = document.querySelector('.primary-nav');
+      nav.classList.toggle('is-open');
+      e.currentTarget.setAttribute('aria-expanded', nav.classList.contains('is-open'));
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      sessionStorage.removeItem('consumer');
+      window.location.href = 'consumer-login.html';
+    });
+
+    // Tab Handling
+    const tabBtnBrowse = document.getElementById('tabBtnBrowse');
+    const tabBtnOrders = document.getElementById('tabBtnOrders');
+    const tabBtnProfile = document.getElementById('tabBtnProfile');
+    const paneBrowse = document.getElementById('paneBrowse');
+    const paneOrders = document.getElementById('paneOrders');
+    const paneProfile = document.getElementById('paneProfile');
+    const navMarketplace = document.getElementById('navMarketplace');
+    const navOrders = document.getElementById('navOrders');
+    const navProfile = document.getElementById('navProfile');
+
+    function switchTab(tabName) {
+      [tabBtnBrowse, tabBtnOrders, tabBtnProfile].forEach(b => b.classList.remove('active'));
+      [paneBrowse, paneOrders, paneProfile].forEach(p => p.hidden = true);
+      [navMarketplace, navOrders, navProfile].forEach(a => a.classList.remove('active-nav-link'));
+
+      if (tabName === 'orders') {
+        tabBtnOrders.classList.add('active');
+        paneOrders.hidden = false;
+        navOrders.classList.add('active-nav-link');
+        loadConsumerOrders();
+      } else if (tabName === 'profile') {
+        tabBtnProfile.classList.add('active');
+        paneProfile.hidden = false;
+        navProfile.classList.add('active-nav-link');
+        renderConsumerProfile(consumer);
+      } else {
+        tabBtnBrowse.classList.add('active');
+        paneBrowse.hidden = false;
+        navMarketplace.classList.add('active-nav-link');
+      }
+    }
+
+    tabBtnBrowse.addEventListener('click', () => switchTab('browse'));
+    tabBtnOrders.addEventListener('click', () => switchTab('orders'));
+    tabBtnProfile.addEventListener('click', () => switchTab('profile'));
+    navMarketplace.addEventListener('click', (e) => { e.preventDefault(); switchTab('browse'); });
+    navOrders.addEventListener('click', (e) => { e.preventDefault(); switchTab('orders'); });
+    navProfile.addEventListener('click', (e) => { e.preventDefault(); switchTab('profile'); });
+
+    // Handle initial hash routing if present
+    if (window.location.hash === '#orders') switchTab('orders');
+    else if (window.location.hash === '#profile') switchTab('profile');
+
+    // -------------------------------------------------------------
+    // MARKETPLACE BROWSING & FILTERS
+    // -------------------------------------------------------------
+    let allListings = [];
+    let currentSelectedListing = null;
+
+    const productsGrid = document.getElementById('productsGrid');
+    const marketSearch = document.getElementById('marketSearch');
+    const locationFilter = document.getElementById('locationFilter');
+    const maxPriceFilter = document.getElementById('maxPriceFilter');
+    const minQtyFilter = document.getElementById('minQtyFilter');
+    const resetFiltersBtn = document.getElementById('resetFiltersBtn');
+    const listingsCountDisplay = document.getElementById('listingsCountDisplay');
+
+    async function loadMarketplaceListings() {
+      try {
+        listingsCountDisplay.textContent = AgriQI18n.t('cm_showing_listings', 'Loading produce listings...').replace('{n}', '...');
+        const response = await fetch('/api/marketplace/listings');
+        if (!response.ok) throw new Error();
+        allListings = await response.json();
+        populateLocationsDropdown();
+        applyListingFilters();
+      } catch (err) {
+        productsGrid.innerHTML = `<p class="empty-search-state" style="grid-column: 1/-1;">Unable to load marketplace listings. Please try again.</p>`;
+        listingsCountDisplay.textContent = '0 listings available';
+      }
+    }
+
+    function populateLocationsDropdown() {
+      const locations = Array.from(new Set(allListings.map(l => l.location).filter(Boolean)));
+      const curVal = locationFilter.value;
+      locationFilter.innerHTML = `<option value="">${AgriQI18n.t('cm_filter_location', 'All Locations')}</option>`;
+      locations.forEach(loc => {
+        const opt = document.createElement('option');
+        opt.value = loc;
+        opt.textContent = loc;
+        if (loc === curVal) opt.selected = true;
+        locationFilter.appendChild(opt);
+      });
+    }
+
+    function formatCurrency(num) {
+      return '₹' + Number(num || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function renderListings(listings) {
+      const tCount = AgriQI18n.t('cm_showing_listings', `Showing ${listings.length} available listing(s)`).replace('{n}', listings.length);
+      listingsCountDisplay.textContent = tCount;
+
+      if (!listings.length) {
+        productsGrid.innerHTML = `<p class="empty-search-state" style="grid-column: 1/-1;">${AgriQI18n.t('cm_no_listings_found', 'No produce listings match your search criteria.')}</p>`;
+        return;
+      }
+
+      productsGrid.innerHTML = listings.map(l => {
+        const imgHtml = l.imageUrl
+          ? `<img src="${l.imageUrl}" alt="${l.cropName}" loading="lazy">`
+          : `<div class="product-fallback-icon" aria-hidden="true">&#127806;</div>`;
+        const varietyBadge = l.varietyGrade ? `<span class="product-variety-pill">${l.varietyGrade}</span>` : '';
+        const minOrder = l.minOrderQuantityKg ? `<span class="product-stock" style="color: #256f3e;">${AgriQI18n.t('cm_min_order_badge', `Min order: ${l.minOrderQuantityKg} kg`).replace('{qty}', l.minOrderQuantityKg)}</span>` : '';
+        const farmerText = l.farmerName || 'Registered Farmer';
+        const locText = l.location || 'Pune Mandi Centre';
+        const buyBtnText = AgriQI18n.t('btn_buy_request', 'Buy / Request Produce');
+
+        return `
+          <article class="product-card">
+            <div class="product-image-wrap">
+              ${imgHtml}
+              <span class="product-status-badge status-available">${AgriQI18n.t('status_available', 'AVAILABLE')}</span>
+            </div>
+            <div class="product-card-body">
+              ${varietyBadge}
+              <h3 class="product-title">${l.cropName}</h3>
+              <div class="product-farmer-meta">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>${farmerText} &bull; ${locText}</span>
+              </div>
+              <p class="product-description">${l.description || 'Fresh directly from farm harvest.'}</p>
+              <div class="product-card-footer">
+                <div class="product-price-block">
+                  <div class="product-price">${formatCurrency(l.pricePerKg)} <span>/ kg</span></div>
+                  <div class="product-stock">${AgriQI18n.t('cm_stock_available', `${l.quantityKg} kg available`).replace('{qty}', l.quantityKg)}</div>
+                  ${minOrder}
+                </div>
+                <button type="button" class="primary-button buy-product-btn" data-id="${l.id}">
+                  <span>${buyBtnText}</span>
+                </button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      // Bind buy buttons
+      document.querySelectorAll('.buy-product-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = Number(btn.getAttribute('data-id'));
+          const found = allListings.find(item => item.id === id);
+          if (found) openPurchaseModal(found);
+        });
+      });
+    }
+
+    function applyListingFilters() {
+      const q = marketSearch.value.trim().toLowerCase();
+      const loc = locationFilter.value.trim().toLowerCase();
+      const maxP = Number(maxPriceFilter.value) || 0;
+      const minQ = Number(minQtyFilter.value) || 0;
+
+      const filtered = allListings.filter(l => {
+        if (q) {
+          const matchCrop = l.cropName && l.cropName.toLowerCase().includes(q);
+          const matchVar = l.varietyGrade && l.varietyGrade.toLowerCase().includes(q);
+          const matchFarmer = l.farmerName && l.farmerName.toLowerCase().includes(q);
+          if (!matchCrop && !matchVar && !matchFarmer) return false;
+        }
+        if (loc) {
+          if (!l.location || !l.location.toLowerCase().includes(loc)) return false;
+        }
+        if (maxP > 0) {
+          if (Number(l.pricePerKg) > maxP) return false;
+        }
+        if (minQ > 0) {
+          if (Number(l.quantityKg) < minQ) return false;
+        }
+        return true;
+      });
+
+      renderListings(filtered);
+    }
+
+    marketSearch.addEventListener('input', applyListingFilters);
+    locationFilter.addEventListener('change', applyListingFilters);
+    maxPriceFilter.addEventListener('input', applyListingFilters);
+    minQtyFilter.addEventListener('input', applyListingFilters);
+    resetFiltersBtn.addEventListener('click', () => {
+      marketSearch.value = '';
+      locationFilter.value = '';
+      maxPriceFilter.value = '';
+      minQtyFilter.value = '';
+      loadMarketplaceListings();
+    });
+
+    // -------------------------------------------------------------
+    // PURCHASE ORDER MODAL & REQUEST FLOW
+    // -------------------------------------------------------------
+    const purchaseModal = document.getElementById('purchaseModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const purchaseOrderForm = document.getElementById('purchaseOrderForm');
+    const modalListingId = document.getElementById('modalListingId');
+    const modalCropTitle = document.getElementById('modalCropTitle');
+    const modalCropName = document.getElementById('modalCropName');
+    const modalVarietyBadge = document.getElementById('modalVarietyBadge');
+    const modalFarmerLocation = document.getElementById('modalFarmerLocation');
+    const modalDescription = document.getElementById('modalDescription');
+    const modalCropImgWrap = document.getElementById('modalCropImgWrap');
+    const orderQuantityInput = document.getElementById('orderQuantityInput');
+    const modalStockHelper = document.getElementById('modalStockHelper');
+    const modalRateDisplay = document.getElementById('modalRateDisplay');
+    const modalQtyDisplay = document.getElementById('modalQtyDisplay');
+    const modalTotalDisplay = document.getElementById('modalTotalDisplay');
+    const orderDeliveryAddress = document.getElementById('orderDeliveryAddress');
+    const modalOrderMessage = document.getElementById('modalOrderMessage');
+    const submitOrderBtn = document.getElementById('submitOrderBtn');
+
+    function openPurchaseModal(listing) {
+      currentSelectedListing = listing;
+      modalListingId.value = listing.id;
+      modalCropName.textContent = listing.cropName;
+      modalVarietyBadge.textContent = listing.varietyGrade || 'Standard Quality';
+      modalFarmerLocation.textContent = `${listing.farmerName || 'Farmer'} • ${listing.location || 'Pune'}`;
+      modalDescription.textContent = listing.description || 'Fresh produce listed directly by the farmer.';
+
+      if (listing.imageUrl) {
+        modalCropImgWrap.innerHTML = `<img src="${listing.imageUrl}" alt="${listing.cropName}">`;
+      } else {
+        modalCropImgWrap.innerHTML = `<span style="font-size: 2rem;">&#127806;</span>`;
+      }
+
+      const minOrder = listing.minOrderQuantityKg ? Number(listing.minOrderQuantityKg) : 1;
+      orderQuantityInput.min = minOrder;
+      orderQuantityInput.max = Number(listing.quantityKg);
+      orderQuantityInput.value = minOrder;
+      modalStockHelper.textContent = `Available stock: ${listing.quantityKg} kg (Min order: ${minOrder} kg)`;
+
+      orderDeliveryAddress.value = (consumer.address ? consumer.address + (consumer.city ? ', ' + consumer.city : '') : '');
+      modalOrderMessage.hidden = true;
+      submitOrderBtn.disabled = false;
+
+      updateModalCalculations();
+      purchaseModal.classList.add('is-active');
+    }
+
+    function closePurchaseModal() {
+      purchaseModal.classList.remove('is-active');
+      currentSelectedListing = null;
+    }
+
+    closeModalBtn.addEventListener('click', closePurchaseModal);
+    purchaseModal.addEventListener('click', e => {
+      if (e.target === purchaseModal) closePurchaseModal();
+    });
+
+    function updateModalCalculations() {
+      if (!currentSelectedListing) return;
+      const qty = Number(orderQuantityInput.value) || 0;
+      const rate = Number(currentSelectedListing.pricePerKg) || 0;
+      const total = qty * rate;
+
+      modalRateDisplay.textContent = formatCurrency(rate) + ' / kg';
+      modalQtyDisplay.textContent = `${qty} kg`;
+      modalTotalDisplay.textContent = formatCurrency(total);
+    }
+
+    orderQuantityInput.addEventListener('input', updateModalCalculations);
+
+    purchaseOrderForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      if (!currentSelectedListing) return;
+
+      const qty = Number(orderQuantityInput.value);
+      const minQty = currentSelectedListing.minOrderQuantityKg ? Number(currentSelectedListing.minOrderQuantityKg) : 1;
+      const maxQty = Number(currentSelectedListing.quantityKg);
+
+      if (qty < minQty) {
+        modalOrderMessage.hidden = false;
+        modalOrderMessage.style.color = '#c62828';
+        modalOrderMessage.textContent = `Minimum order quantity is ${minQty} kg.`;
+        return;
+      }
+      if (qty > maxQty) {
+        modalOrderMessage.hidden = false;
+        modalOrderMessage.style.color = '#c62828';
+        modalOrderMessage.textContent = `Requested quantity exceeds available stock (${maxQty} kg).`;
+        return;
+      }
+
+      const orderData = {
+        listingId: currentSelectedListing.id,
+        consumerId: consumer.id,
+        consumerName: consumer.name,
+        consumerMobile: consumer.mobileNumber,
+        deliveryAddress: orderDeliveryAddress.value.trim(),
+        quantityKg: qty
+      };
+
+      submitOrderBtn.disabled = true;
+      modalOrderMessage.hidden = false;
+      modalOrderMessage.style.color = '#23633a';
+      modalOrderMessage.textContent = AgriQI18n.t('cm_order_placing', 'Placing order request...');
+
+      try {
+        const res = await fetch('/api/marketplace/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderData)
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          modalOrderMessage.style.color = '#c62828';
+          modalOrderMessage.textContent = data.message || 'Failed to place order.';
+          submitOrderBtn.disabled = false;
+          return;
+        }
+
+        modalOrderMessage.textContent = AgriQI18n.t('cm_order_success', 'Order request placed successfully!');
+        setTimeout(() => {
+          closePurchaseModal();
+          loadMarketplaceListings();
+          switchTab('orders');
+        }, 1100);
+      } catch (err) {
+        modalOrderMessage.style.color = '#c62828';
+        modalOrderMessage.textContent = AgriQI18n.t('reg_network_error', 'Unable to connect. Please try again.');
+        submitOrderBtn.disabled = false;
+      }
+    });
+
+    // -------------------------------------------------------------
+    // CONSUMER ORDERS / PURCHASES TAB
+    // -------------------------------------------------------------
+    const ordersTableBody = document.getElementById('ordersTableBody');
+    const ordersCountBadge = document.getElementById('ordersCountBadge');
+    const refreshOrdersBtn = document.getElementById('refreshOrdersBtn');
+
+    async function loadConsumerOrders() {
+      if (!consumer?.id) return;
+      ordersTableBody.innerHTML = `<tr><td colspan="9" class="empty-search-state">${AgriQI18n.t('cm_orders_loading', 'Loading your orders...')}</td></tr>`;
+      try {
+        const res = await fetch(`/api/marketplace/orders/consumer/${consumer.id}`);
+        if (!res.ok) throw new Error();
+        const orders = await res.json();
+        renderConsumerOrders(orders);
+      } catch (e) {
+        ordersTableBody.innerHTML = `<tr><td colspan="9" class="empty-search-state">Unable to load orders.</td></tr>`;
+      }
+    }
+
+    function renderConsumerOrders(orders) {
+      if (orders && orders.length > 0) {
+        ordersCountBadge.textContent = orders.length;
+        ordersCountBadge.hidden = false;
+      } else {
+        ordersCountBadge.hidden = true;
+      }
+
+      if (!orders || !orders.length) {
+        ordersTableBody.innerHTML = `<tr><td colspan="9" class="empty-search-state">${AgriQI18n.t('cm_orders_empty', 'You have not placed any orders yet.')}</td></tr>`;
+        return;
+      }
+
+      ordersTableBody.innerHTML = orders.map(ord => {
+        const st = (ord.orderStatus || 'PENDING').toUpperCase();
+        let statusClass = 'status-pending';
+        if (st === 'ACCEPTED') statusClass = 'status-accepted';
+        else if (st === 'COMPLETED') statusClass = 'status-completed';
+        else if (st === 'CANCELLED') statusClass = 'status-cancelled';
+
+        const localizedStatus = AgriQI18n.t('status_' + st.toLowerCase(), st);
+        const cancelBtnHtml = (st === 'PENDING')
+          ? `<button type="button" class="cancel-order-btn secondary-button" style="padding: 4px 8px; font-size: 0.76rem; color: #c62828; border-color: #f5c6cb;" data-id="${ord.id}">${AgriQI18n.t('btn_cancel_order', 'Cancel')}</button>`
+          : '—';
+
+        return `
+          <tr>
+            <td style="font-weight: 700;">#ORD-${ord.id}</td>
+            <td class="crop-name-cell">${ord.cropName}</td>
+            <td class="price-kg-cell">${Number(ord.quantityKg).toFixed(2).replace(/\.00$/, '')} kg</td>
+            <td class="price-kg-cell">${formatCurrency(ord.pricePerKg)}</td>
+            <td class="price-quintal-cell">${formatCurrency(ord.totalAmount)}</td>
+            <td>${ord.farmerName || 'Farmer'}</td>
+            <td>${ord.orderDate || '—'}</td>
+            <td><span class="badge-season ${statusClass}">${localizedStatus}</span></td>
+            <td style="text-align: center;">${cancelBtnHtml}</td>
+          </tr>
+        `;
+      }).join('');
+
+      // Bind cancel buttons
+      document.querySelectorAll('.cancel-order-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const orderId = btn.getAttribute('data-id');
+          if (!confirm(AgriQI18n.t('cm_order_cancel_confirm', 'Are you sure you want to cancel this order?'))) return;
+          try {
+            const res = await fetch(`/api/marketplace/orders/${orderId}/status`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ status: 'CANCELLED' })
+            });
+            if (res.ok) {
+              loadConsumerOrders();
+              loadMarketplaceListings();
+            }
+          } catch (e) {}
+        });
+      });
+    }
+
+    refreshOrdersBtn.addEventListener('click', loadConsumerOrders);
+
+    // -------------------------------------------------------------
+    // CONSUMER PROFILE TAB
+    // -------------------------------------------------------------
+    const profileConsumerNameDisplay = document.getElementById('profileConsumerNameDisplay');
+    const cIdDisplay = document.getElementById('cIdDisplay');
+    const cNameDisplay = document.getElementById('cNameDisplay');
+    const cMobileDisplay = document.getElementById('cMobileDisplay');
+    const cCityDisplay = document.getElementById('cCityDisplay');
+    const cAddressDisplay = document.getElementById('cAddressDisplay');
+
+    const editConsumerProfileBtn = document.getElementById('editConsumerProfileBtn');
+    const cancelConsumerProfileBtn = document.getElementById('cancelConsumerProfileBtn');
+    const consumerProfileView = document.getElementById('consumerProfileView');
+    const consumerProfileEditForm = document.getElementById('consumerProfileEditForm');
+    const editCName = document.getElementById('editCName');
+    const editCMobile = document.getElementById('editCMobile');
+    const editCCity = document.getElementById('editCCity');
+    const editCAddress = document.getElementById('editCAddress');
+    const consumerProfileMsg = document.getElementById('consumerProfileMsg');
+
+    function renderConsumerProfile(c) {
+      if (!c) return;
+      profileConsumerNameDisplay.textContent = c.name || 'Consumer';
+      cIdDisplay.textContent = c.id ? `#CID-${c.id}` : '#CID-—';
+      cNameDisplay.textContent = c.name || '—';
+      cMobileDisplay.textContent = c.mobileNumber || '—';
+      cCityDisplay.textContent = c.city || AgriQI18n.t('prof_not_provided', 'Not provided');
+      cAddressDisplay.textContent = c.address || AgriQI18n.t('prof_not_provided', 'Not provided');
+
+      editCName.value = c.name || '';
+      editCMobile.value = c.mobileNumber || '';
+      editCCity.value = c.city || '';
+      editCAddress.value = c.address || '';
+    }
+
+    editConsumerProfileBtn.addEventListener('click', () => {
+      consumerProfileView.hidden = true;
+      consumerProfileEditForm.hidden = false;
+      editConsumerProfileBtn.hidden = true;
+      consumerProfileMsg.hidden = true;
+    });
+
+    cancelConsumerProfileBtn.addEventListener('click', () => {
+      renderConsumerProfile(consumer);
+      consumerProfileEditForm.hidden = true;
+      consumerProfileView.hidden = false;
+      editConsumerProfileBtn.hidden = false;
+      consumerProfileMsg.hidden = true;
+    });
+
+    consumerProfileEditForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const updated = {
+        name: editCName.value.trim(),
+        city: editCCity.value.trim(),
+        address: editCAddress.value.trim()
+      };
+
+      consumerProfileMsg.hidden = false;
+      consumerProfileMsg.textContent = AgriQI18n.t('prof_saving', 'Saving profile...');
+      consumerProfileMsg.style.color = '#23633a';
+
+      try {
+        const res = await fetch(`/api/consumers/${consumer.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updated)
+        });
+        if (res.ok) {
+          const fresh = await res.json();
+          consumer = Object.assign({}, consumer, fresh);
+        } else {
+          consumer = Object.assign({}, consumer, updated);
+        }
+      } catch (err) {
+        consumer = Object.assign({}, consumer, updated);
+      }
+
+      sessionStorage.setItem('consumer', JSON.stringify(consumer));
+      welcomeName.textContent = consumer.name;
+      renderConsumerProfile(consumer);
+
+      consumerProfileMsg.textContent = AgriQI18n.t('prof_saved', 'Profile updated successfully!');
+      setTimeout(() => {
+        consumerProfileEditForm.hidden = true;
+        consumerProfileView.hidden = false;
+        editConsumerProfileBtn.hidden = false;
+        consumerProfileMsg.hidden = true;
+      }, 800);
+    });
+
+    // Initial loads
+    renderConsumerProfile(consumer);
+    loadMarketplaceListings();
+
+    // Re-render on language change
+    window.addEventListener('agriq-lang-change', () => {
+      applyListingFilters();
+      renderConsumerProfile(consumer);
+    });
+  </script>
+</body>
+</html>

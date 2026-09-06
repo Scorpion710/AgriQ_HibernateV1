@@ -6,7 +6,6 @@
   <title>AgriQ | My Profile</title>
   <link rel="stylesheet" href="css/dashboard.css">
   <link rel="stylesheet" href="css/navigation.css">
-  <script src="js/theme.js"></script>
   <script src="js/i18n.js"></script>
 </head>
 <body>
@@ -16,15 +15,14 @@
     <nav class="primary-nav" aria-label="Farmer navigation">
       <a href="dashboard.html" data-i18n="nav_dashboard">Dashboard</a>
       <a href="booking.html" data-i18n="nav_book_slot">Book Slot</a>
-      <a href="procurement.html" data-i18n="nav_procurement">Procurement</a>
-      <a href="payment.html" data-i18n="nav_payment_status">Payment Status</a>
+      <a href="farmer-marketplace.html" data-i18n="nav_marketplace">Marketplace</a>
+      <a href="procurement.html" data-i18n="nav_procurement_payments">Procurement & Payments</a>
       <a href="my-profile.html" aria-current="page" data-i18n="nav_my_profile">My Profile</a>
       <select class="lang-select" aria-label="Select Language">
         <option value="en">English</option>
         <option value="hi">हिन्दी</option>
         <option value="mr">मराठी</option>
       </select>
-      <button id="logout" class="nav-logout" data-i18n="nav_logout">Logout</button>
     </nav>
   </header>
 
@@ -122,6 +120,21 @@
         </div>
         <p id="profileMessage" class="action-message" role="alert" style="margin: 10px 0 0;" hidden></p>
       </form>
+      <!-- Profile Account & Logout Section -->
+      <div class="profile-account-footer" style="margin-top: 32px; padding-top: 24px; border-top: 1.5px solid var(--line, #dce9dc); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+        <div>
+          <strong style="color: var(--ink, #183326); font-size: 1rem; display: block;" data-i18n="prof_account_session">Account & Session</strong>
+          <p style="margin: 4px 0 0; color: var(--muted, #647568); font-size: 0.85rem;" data-i18n="prof_logout_desc">Sign out securely from your farmer account on this device.</p>
+        </div>
+        <button type="button" id="logout" class="profile-logout-btn" style="padding: 10px 22px; border: 1.5px solid #d32f2f; border-radius: 9px; background: #fff; color: #d32f2f; font-weight: 700; font-size: 0.92rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 6px rgba(211,47,47,0.08); transition: all 0.2s ease;">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          <span data-i18n="nav_logout">Logout</span>
+        </button>
+      </div>
     </article>
   </main>
 
@@ -129,7 +142,7 @@
     let farmer;
     try { farmer = JSON.parse(sessionStorage.getItem('farmer')); } catch (error) { farmer = null; }
     if (!farmer || !farmer.name || (!farmer.mobileNumber && !farmer.aadhaarNumber)) {
-      location.replace(sessionStorage.getItem('admin') === 'true' ? 'admin-dashboard.html' : 'index.html');
+      location.replace(sessionStorage.getItem('admin') === 'true' ? 'admin-dashboard.html' : (sessionStorage.getItem('consumer') ? 'consumer-dashboard.html' : 'index.html'));
     }
 
     // Navigation toggle & Logout
