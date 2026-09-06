@@ -111,7 +111,9 @@
           </div>
           <div class="edit-form-field">
             <label for="editCentre" data-i18n="prof_centre">Office / Centre</label>
-            <input type="text" id="editCentre" data-i18n-placeholder="prof_centre_placeholder" placeholder="e.g. Mandi Procurement Centre #2">
+            <select id="editCentre">
+              <option value="" data-i18n="booking_select_centre">Select a procurement centre</option>
+            </select>
           </div>
         </div>
         <div class="profile-action-buttons" style="margin-top: 10px;">
@@ -165,10 +167,46 @@
       editMobile.value = f.mobileNumber || '';
       editCrops.value = f.registeredCrops || '';
       editVillage.value = f.village || '';
-      editCentre.value = f.procurementCentre || '';
+      if (centresList.length) {
+        populateCentreDropdown();
+      } else {
+        editCentre.value = f.procurementCentre || '';
+      }
+    }
+
+    let centresList = [];
+    async function loadCentres() {
+      try {
+        const res = await fetch('/api/bookings/centres');
+        if (!res.ok) return;
+        centresList = await res.json();
+        populateCentreDropdown();
+      } catch (e) {}
+    }
+
+    function populateCentreDropdown() {
+      const selectedValue = editCentre.value || (farmer && farmer.procurementCentre) || '';
+      editCentre.innerHTML = `<option value="">${AgriQI18n.t('booking_select_centre')}</option>`;
+      centresList.forEach(centre => {
+        const opt = document.createElement('option');
+        opt.value = centre.name;
+        opt.textContent = centre.name;
+        if (centre.name === selectedValue) {
+          opt.selected = true;
+        }
+        editCentre.appendChild(opt);
+      });
+      if (selectedValue && !centresList.some(c => c.name === selectedValue)) {
+        const fallbackOpt = document.createElement('option');
+        fallbackOpt.value = selectedValue;
+        fallbackOpt.textContent = selectedValue;
+        fallbackOpt.selected = true;
+        editCentre.appendChild(fallbackOpt);
+      }
     }
 
     renderProfile(farmer);
+    loadCentres();
 
     // Sync latest profile from backend if available
     async function loadFarmerProfile() {
@@ -263,6 +301,7 @@
 
     window.addEventListener('agriq-lang-change', () => {
       renderProfile(farmer);
+      populateCentreDropdown();
     });
   </script>
 </body>

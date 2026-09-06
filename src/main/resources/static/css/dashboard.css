@@ -187,7 +187,8 @@ button { font: inherit; }
   text-transform: uppercase;
 }
 
-.edit-form-field input {
+.edit-form-field input,
+.edit-form-field select {
   padding: 8px 10px;
   border: 1px solid #b9cfba;
   border-radius: 6px;
@@ -197,7 +198,8 @@ button { font: inherit; }
   outline: none;
 }
 
-.edit-form-field input:focus {
+.edit-form-field input:focus,
+.edit-form-field select:focus {
   border-color: #2f7d45;
   box-shadow: 0 0 0 3px #d6ead0;
 }
@@ -660,13 +662,15 @@ button { font: inherit; }
   color: var(--ink);
 }
 
-[data-theme="dark"] .edit-form-field input {
+[data-theme="dark"] .edit-form-field input,
+[data-theme="dark"] .edit-form-field select {
   background: #000;
   color: var(--ink);
   border-color: var(--line);
 }
 
-[data-theme="dark"] .edit-form-field input:focus {
+[data-theme="dark"] .edit-form-field input:focus,
+[data-theme="dark"] .edit-form-field select:focus {
   border-color: var(--green);
   box-shadow: 0 0 0 3px rgba(102, 189, 122, 0.2);
 }

@@ -16,6 +16,21 @@ public class FarmerService {
         this.farmerRepository = farmerRepository;
     }
 
+    @jakarta.annotation.PostConstruct
+    public void migrateExistingFarmersWithoutAadhaar() {
+        try {
+            List<Farmer> farmers = farmerRepository.findAll();
+            for (Farmer f : farmers) {
+                if (f.getAadhaarNumber() == null || f.getAadhaarNumber().isBlank()) {
+                    long idVal = (f.getId() != null) ? f.getId() : 1L;
+                    f.setAadhaarNumber(String.format("%012d", 100000000000L + idVal));
+                    farmerRepository.save(f);
+                }
+            }
+        } catch (Exception ignored) {
+        }
+    }
+
     public Farmer registerFarmer(Farmer farmer) {
         if (farmer.getName() == null || farmer.getName().isBlank()) {
             throw new RuntimeException("Farmer name is required.");
